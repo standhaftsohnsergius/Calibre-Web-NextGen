@@ -16,6 +16,18 @@ is for things you can see or feel when running the app.
 
 ## [Unreleased]
 
+### Fixed
+- **Beta (`:dev`) builds no longer nag about a "false" update.** If you run the
+  beta image, the "update available" banner kept pointing at the latest *stable*
+  release even though a beta build is actually ahead of it. Beta/unversioned
+  builds are now recognised and don't show the banner.
+- **Stacked notices no longer pile up into an unreadable blur.** When more than
+  one pop-up notice showed at once — e.g. the duplicate-scan setup notice plus
+  the update banner — they all floated to the same spot and rendered on top of
+  each other. They now stack neatly in a column.
+
+## [v4.0.170] - 2026-06-23
+
 ### Added
 - **Update from a button instead of hunting for the right Docker command.** When
   a new version is available, the update banner and the Admin page now show an
@@ -32,6 +44,12 @@ is for things you can see or feel when running the app.
   left edge and the slider readouts ("150%", "0px") were clipped at the right.
   The panel now insets its content again, and the "Settings" title keeps its
   full-width bar across the top. Reported by @sambong.
+- **The Duplicate Books page works again behind a reverse proxy on a sub-path.**
+  Behind a proxy mounted on a sub-path, the cover placeholder kept requesting
+  `generic_cover.svg` in an endless loop, and dismissing or resolving a duplicate
+  group failed with "Failed to update duplicate group." Both came from page URLs
+  that dropped the proxy's sub-path prefix; they now carry it. Reported by
+  @chloeroform.
 
 ## [v4.0.169] - 2026-06-22
 
