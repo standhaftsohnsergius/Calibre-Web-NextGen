@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-06-23 04:18+0000\n"
+"POT-Creation-Date: 2026-06-23 17:35+0000\n"
 "PO-Revision-Date: 2018-02-07 02:20-0500\n"
 "Last-Translator: subdiox <subdiox@gmail.com>\n"
 "Language-Team: ja <LL@li.org>\n"
@@ -3098,7 +3098,7 @@ msgstr "未読にする"
 #: cps/templates/book_edit.html:59 cps/templates/book_table.html:66
 #: cps/templates/book_table.html:145 cps/templates/book_table.html:194
 #: cps/templates/duplicates.html:718 cps/templates/modal_dialogs.html:63
-#: cps/templates/modal_dialogs.html:116 cps/templates/read.html:175
+#: cps/templates/modal_dialogs.html:116 cps/templates/read.html:179
 #: cps/templates/user_edit.html:333 cps/templates/user_table.html:150
 msgid "Delete"
 msgstr "削除"
@@ -3533,7 +3533,7 @@ msgstr "OK"
 #: cps/templates/duplicates.html:746 cps/templates/layout.html:614
 #: cps/templates/layout.html:769 cps/templates/modal_dialogs.html:64
 #: cps/templates/modal_dialogs.html:99 cps/templates/modal_dialogs.html:117
-#: cps/templates/modal_dialogs.html:135 cps/templates/read.html:174
+#: cps/templates/modal_dialogs.html:135 cps/templates/read.html:178
 #: cps/templates/schedule_edit.html:46 cps/templates/shelf.html:125
 #: cps/templates/shelf_edit.html:34 cps/templates/tasks.html:94
 #: cps/templates/tasks.html:166 cps/templates/tasks.html:173
@@ -3649,7 +3649,7 @@ msgstr ""
 msgid "Source: %(s)s"
 msgstr "シリーズ: %(serie)s"
 
-#: cps/templates/annotations_view.html:45 cps/templates/read.html:179
+#: cps/templates/annotations_view.html:45 cps/templates/read.html:183
 msgid "No annotations on this book yet."
 msgstr ""
 
@@ -3708,7 +3708,7 @@ msgstr "本を変換"
 #: cps/templates/book_table.html:346 cps/templates/duplicates.html:766
 #: cps/templates/layout.html:204 cps/templates/layout.html:508
 #: cps/templates/layout.html:651 cps/templates/modal_dialogs.html:34
-#: cps/templates/shelf.html:110 cps/templates/update_now_modal.html:61
+#: cps/templates/shelf.html:110 cps/templates/update_now_modal.html:69
 #: cps/templates/user_edit.html:673
 msgid "Close"
 msgstr "閉じる"
@@ -3852,7 +3852,7 @@ msgstr "メタデータを取得"
 
 #: cps/templates/book_edit.html:313 cps/templates/config_db.html:111
 #: cps/templates/config_edit.html:664 cps/templates/config_view_edit.html:237
-#: cps/templates/email_edit.html:71 cps/templates/read.html:173
+#: cps/templates/email_edit.html:71 cps/templates/read.html:177
 #: cps/templates/schedule_edit.html:47 cps/templates/shelf_edit.html:36
 #: cps/templates/shelf_reorder.html:38 cps/templates/user_edit.html:585
 msgid "Save"
@@ -5867,15 +5867,15 @@ msgid ""
 "up -d\". After that you stay up to date automatically — no button to press."
 msgstr ""
 
-#: cps/templates/cwa_settings.html:770 cps/templates/update_now_modal.html:28
-#: cps/templates/update_now_modal.html:37
-#: cps/templates/update_now_modal.html:55 cps/templates/user_edit.html:618
+#: cps/templates/cwa_settings.html:770 cps/templates/update_now_modal.html:36
+#: cps/templates/update_now_modal.html:45
+#: cps/templates/update_now_modal.html:63 cps/templates/user_edit.html:618
 msgid "Copied!"
 msgstr ""
 
-#: cps/templates/cwa_settings.html:770 cps/templates/update_now_modal.html:28
-#: cps/templates/update_now_modal.html:37
-#: cps/templates/update_now_modal.html:55 cps/templates/user_edit.html:618
+#: cps/templates/cwa_settings.html:770 cps/templates/update_now_modal.html:36
+#: cps/templates/update_now_modal.html:45
+#: cps/templates/update_now_modal.html:63 cps/templates/user_edit.html:618
 #, fuzzy
 msgid "Copy"
 msgstr "UUIDをコピー"
@@ -7222,7 +7222,7 @@ msgstr "アカウント"
 msgid "Logout"
 msgstr "ログアウト"
 
-#: cps/templates/layout.html:218 cps/templates/read.html:99
+#: cps/templates/layout.html:218 cps/templates/read.html:103
 #: cps/templates/readcbr.html:71 cps/templates/readcbr.html:97
 msgid "Settings"
 msgstr "設定"
@@ -7579,105 +7579,105 @@ msgstr "アクション"
 msgid "Open annotations page"
 msgstr ""
 
-#: cps/templates/read.html:102 cps/templates/readcbr.html:102
+#: cps/templates/read.html:106 cps/templates/readcbr.html:102
 #: cps/templates/user_edit.html:279
 msgid "Theme"
 msgstr "テーマ"
 
-#: cps/templates/read.html:104 cps/templates/readcbr.html:105
+#: cps/templates/read.html:108 cps/templates/readcbr.html:105
 msgid "Light"
 msgstr "ライト"
 
-#: cps/templates/read.html:105 cps/templates/readcbr.html:106
+#: cps/templates/read.html:109 cps/templates/readcbr.html:106
 msgid "Dark"
 msgstr "ダーク"
 
-#: cps/templates/read.html:106
+#: cps/templates/read.html:110
 msgid "Sepia"
 msgstr "セピア"
 
-#: cps/templates/read.html:107
+#: cps/templates/read.html:111
 msgid "Black"
 msgstr "ブラック"
 
-#: cps/templates/read.html:112
+#: cps/templates/read.html:116
 msgid "Font Sizes"
 msgstr "フォントサイズ"
 
-#: cps/templates/read.html:120
+#: cps/templates/read.html:124
 #, fuzzy
 msgid "Text margin"
 msgstr "次のページ"
 
-#: cps/templates/read.html:128
+#: cps/templates/read.html:132
 msgid "Font"
 msgstr "フォント"
 
-#: cps/templates/read.html:130
+#: cps/templates/read.html:134
 msgid "Default"
 msgstr "デフォルト"
 
-#: cps/templates/read.html:131
+#: cps/templates/read.html:135
 msgid "Yahei"
 msgstr "ヤヘイ"
 
-#: cps/templates/read.html:132
+#: cps/templates/read.html:136
 msgid "SimSun"
 msgstr "宋体"
 
-#: cps/templates/read.html:133
+#: cps/templates/read.html:137
 msgid "KaiTi"
 msgstr "楷体"
 
-#: cps/templates/read.html:134
+#: cps/templates/read.html:138
 msgid "Arial"
 msgstr "Arial"
 
-#: cps/templates/read.html:139
+#: cps/templates/read.html:143
 msgid "Spread"
 msgstr "見開き"
 
-#: cps/templates/read.html:141
+#: cps/templates/read.html:145
 msgid "Two columns"
 msgstr "2カラム"
 
-#: cps/templates/read.html:142
+#: cps/templates/read.html:146
 msgid "One column"
 msgstr "1カラム"
 
-#: cps/templates/read.html:149
+#: cps/templates/read.html:153
 msgid "Reflow text when sidebars are open."
 msgstr "サイドバーが開いているとき、テキストを再度流し込みます。"
 
-#: cps/templates/read.html:176
+#: cps/templates/read.html:180
 #, fuzzy
 msgid "Note"
 msgstr "メモ："
 
-#: cps/templates/read.html:177
+#: cps/templates/read.html:181
 msgid "Add a note (optional)"
 msgstr ""
 
-#: cps/templates/read.html:178
+#: cps/templates/read.html:182
 msgid "Select within a paragraph to highlight."
 msgstr ""
 
-#: cps/templates/read.html:181
+#: cps/templates/read.html:185
 #, fuzzy
 msgid "Yellow"
 msgstr "許可"
 
-#: cps/templates/read.html:182
+#: cps/templates/read.html:186
 #, fuzzy
 msgid "Red"
 msgstr "既読"
 
-#: cps/templates/read.html:183
+#: cps/templates/read.html:187
 #, fuzzy
 msgid "Green"
 msgstr "ギリシャ語"
 
-#: cps/templates/read.html:184
+#: cps/templates/read.html:188
 msgid "Blue"
 msgstr ""
 
@@ -8202,100 +8202,100 @@ msgstr "スケジュール項目をキャンセルしました"
 msgid "Error cancelling scheduled item"
 msgstr "スケジュール項目のキャンセルエラー"
 
-#: cps/templates/update_now_modal.html:11
+#: cps/templates/update_now_modal.html:19
 #, fuzzy
 msgid "Update Calibre-Web NextGen"
 msgstr "Calibre-Web Automated 電子書籍カタログ"
 
-#: cps/templates/update_now_modal.html:14
+#: cps/templates/update_now_modal.html:22
 msgid ""
 "Updating pulls the new image and recreates the container. It is quick, and "
 "your library, settings and reading progress are safe — they live in your "
 "mounted volumes, not in the container."
 msgstr ""
 
-#: cps/templates/update_now_modal.html:16
+#: cps/templates/update_now_modal.html:24
 msgid "How do you run Calibre-Web NextGen?"
 msgstr ""
 
-#: cps/templates/update_now_modal.html:17
+#: cps/templates/update_now_modal.html:25
 msgid "Setup type"
 msgstr ""
 
-#: cps/templates/update_now_modal.html:18
+#: cps/templates/update_now_modal.html:26
 msgid "Docker Compose"
 msgstr ""
 
-#: cps/templates/update_now_modal.html:19
+#: cps/templates/update_now_modal.html:27
 msgid "docker run"
 msgstr ""
 
-#: cps/templates/update_now_modal.html:20
+#: cps/templates/update_now_modal.html:28
 msgid "Unraid"
 msgstr ""
 
-#: cps/templates/update_now_modal.html:21
+#: cps/templates/update_now_modal.html:29
 msgid "Portainer / Synology"
 msgstr ""
 
-#: cps/templates/update_now_modal.html:25
+#: cps/templates/update_now_modal.html:33
 msgid "Run this from the folder that holds your compose file:"
 msgstr ""
 
-#: cps/templates/update_now_modal.html:30
+#: cps/templates/update_now_modal.html:38
 msgid "Replace calibre-web-nextgen with your service name if it differs."
 msgstr ""
 
-#: cps/templates/update_now_modal.html:34
+#: cps/templates/update_now_modal.html:42
 msgid ""
 "Pull the new image, then recreate your container with the same options you "
 "started it with:"
 msgstr ""
 
-#: cps/templates/update_now_modal.html:39
+#: cps/templates/update_now_modal.html:47
 msgid ""
 "Then stop and remove the old container and start a new one with your usual "
 "docker run command. Your mounted volumes keep all data."
 msgstr ""
 
-#: cps/templates/update_now_modal.html:44
+#: cps/templates/update_now_modal.html:52
 msgid "Open the Docker tab in the Unraid web UI."
 msgstr ""
 
-#: cps/templates/update_now_modal.html:45
+#: cps/templates/update_now_modal.html:53
 msgid ""
 "Click the Calibre-Web NextGen container icon and choose Force update (check "
 "for updates first if you want to see what changed)."
 msgstr ""
 
-#: cps/templates/update_now_modal.html:47
+#: cps/templates/update_now_modal.html:55
 msgid ""
 "For hands-off updates, install the \"CA Auto Update Applications\" plugin "
 "from Community Applications."
 msgstr ""
 
-#: cps/templates/update_now_modal.html:51
+#: cps/templates/update_now_modal.html:59
 #, fuzzy
 msgid "Portainer:"
 msgstr "重要："
 
-#: cps/templates/update_now_modal.html:51
+#: cps/templates/update_now_modal.html:59
 msgid ""
 "Images → pull the image below, then Containers → select Calibre-Web NextGen "
 "→ Recreate with \"Re-pull image\" enabled."
 msgstr ""
 
-#: cps/templates/update_now_modal.html:52
+#: cps/templates/update_now_modal.html:60
 msgid "Synology Container Manager:"
 msgstr ""
 
-#: cps/templates/update_now_modal.html:52
+#: cps/templates/update_now_modal.html:60
 msgid ""
 "Registry → download the image below (tag: latest), then stop the container → "
 "Action → Reset to recreate it."
 msgstr ""
 
-#: cps/templates/update_now_modal.html:60
+#: cps/templates/update_now_modal.html:68
 #, fuzzy
 msgid "Set up automatic updates"
 msgstr "自動重複スキャンを有効化"
