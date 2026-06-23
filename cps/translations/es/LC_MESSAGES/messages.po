@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-06-22 23:34-0400\n"
+"POT-Creation-Date: 2026-06-23 04:18+0000\n"
 "PO-Revision-Date: 2025-11-17 12:21-0300\n"
 "Last-Translator: minakmostoles <xxx@xxx.com>\n"
 "Language-Team: es <LL@li.org>\n"
@@ -3584,8 +3584,8 @@ msgstr "Ok"
 #: cps/templates/cwa_convert_library.html:23
 #: cps/templates/cwa_epub_fixer.html:40 cps/templates/detail.html:1173
 #: cps/templates/duplicates.html:696 cps/templates/duplicates.html:719
-#: cps/templates/duplicates.html:746 cps/templates/layout.html:612
-#: cps/templates/layout.html:767 cps/templates/modal_dialogs.html:64
+#: cps/templates/duplicates.html:746 cps/templates/layout.html:614
+#: cps/templates/layout.html:769 cps/templates/modal_dialogs.html:64
 #: cps/templates/modal_dialogs.html:99 cps/templates/modal_dialogs.html:117
 #: cps/templates/modal_dialogs.html:135 cps/templates/read.html:174
 #: cps/templates/schedule_edit.html:46 cps/templates/shelf.html:125
@@ -3761,7 +3761,7 @@ msgstr "Convertir libro"
 #: cps/templates/book_edit.html:94 cps/templates/book_edit.html:378
 #: cps/templates/book_table.html:346 cps/templates/duplicates.html:766
 #: cps/templates/layout.html:204 cps/templates/layout.html:508
-#: cps/templates/layout.html:649 cps/templates/modal_dialogs.html:34
+#: cps/templates/layout.html:651 cps/templates/modal_dialogs.html:34
 #: cps/templates/shelf.html:110 cps/templates/update_now_modal.html:61
 #: cps/templates/user_edit.html:673
 msgid "Close"
@@ -6952,7 +6952,7 @@ msgstr "¡Esta acción no se puede deshacer!"
 msgid "The following books will be permanently deleted:"
 msgstr "Los siguientes libros se eliminarán de forma permanente:"
 
-#: cps/templates/duplicates.html:730 cps/templates/layout.html:564
+#: cps/templates/duplicates.html:730 cps/templates/layout.html:566
 msgid "Merge Books"
 msgstr "Fusionar libros"
 
@@ -7388,111 +7388,111 @@ msgstr "Anterior"
 msgid "Book Details"
 msgstr "Detalles del libro"
 
-#: cps/templates/layout.html:570
+#: cps/templates/layout.html:572
 #, fuzzy
 msgid "This cannot be undone."
 msgstr "¡Esta acción no se puede deshacer!"
 
-#: cps/templates/layout.html:576
+#: cps/templates/layout.html:578
 #, fuzzy
 msgid "Will be deleted"
 msgstr "Eliminar Seleccionados"
 
-#: cps/templates/layout.html:580 cps/templates/layout.html:593
+#: cps/templates/layout.html:582 cps/templates/layout.html:595
 #, fuzzy
 msgid "Formats:"
 msgstr "Formato"
 
-#: cps/templates/layout.html:589
+#: cps/templates/layout.html:591
 msgid "Will be kept"
 msgstr ""
 
-#: cps/templates/layout.html:601
+#: cps/templates/layout.html:603
 msgid "Format conflicts — choose what to do:"
 msgstr ""
 
-#: cps/templates/layout.html:607
+#: cps/templates/layout.html:609
 #, fuzzy
 msgid "Result will have formats:"
 msgstr "Borrar formatos:"
 
-#: cps/templates/layout.html:616
+#: cps/templates/layout.html:618
 msgid "Merge &amp; Delete Source"
 msgstr ""
 
-#: cps/templates/layout.html:650
+#: cps/templates/layout.html:652
 #, fuzzy
 msgid "Duplicate Books Detected"
 msgstr "Se han detectado libros duplicados"
 
-#: cps/templates/layout.html:651
+#: cps/templates/layout.html:653
 msgid "You have unresolved duplicate books in your library"
 msgstr "Tienes libros duplicados sin resolver en tu biblioteca"
 
-#: cps/templates/layout.html:656
+#: cps/templates/layout.html:658
 #, fuzzy
 msgid "Duplicate Groups Found"
 msgstr "Se han encontrado grupos de duplicados"
 
-#: cps/templates/layout.html:664
+#: cps/templates/layout.html:666
 msgid "Remind Me Later"
 msgstr "Recordármelo más tarde"
 
-#: cps/templates/layout.html:667
+#: cps/templates/layout.html:669
 #, fuzzy
 msgid "View & Resolve Duplicates"
 msgstr "Seleccionar duplicados"
 
-#: cps/templates/layout.html:676
+#: cps/templates/layout.html:678
 #, fuzzy
 msgid "Scroll to top"
 msgstr "Escala al máximo"
 
-#: cps/templates/layout.html:678
+#: cps/templates/layout.html:680
 #, fuzzy
 msgid "Top"
 msgstr "Tip"
 
-#: cps/templates/layout.html:768
+#: cps/templates/layout.html:770
 msgid "Confirm"
 msgstr ""
 
-#: cps/templates/layout.html:774
+#: cps/templates/layout.html:776
 #, fuzzy, python-brace-format
 msgid "Added {n} books to {shelf}"
 msgstr "Agregar a la estantería"
 
-#: cps/templates/layout.html:775
+#: cps/templates/layout.html:777
 #, python-brace-format
 msgid "Added {ok} of {n} books to {shelf} (rest were already there)"
 msgstr ""
 
-#: cps/templates/layout.html:776
+#: cps/templates/layout.html:778
 #, python-brace-format
 msgid "All {n} book(s) were already on {shelf}."
 msgstr ""
 
-#: cps/templates/layout.html:777
+#: cps/templates/layout.html:779
 #, fuzzy, python-brace-format
 msgid "Marked {n} books as read"
 msgstr "Fusionar libros seleccionados"
 
-#: cps/templates/layout.html:778
+#: cps/templates/layout.html:780
 #, fuzzy, python-brace-format
 msgid "Marked {n} books as unread"
 msgstr "Marcar como no leído"
 
-#: cps/templates/layout.html:779
+#: cps/templates/layout.html:781
 #, fuzzy, python-brace-format
 msgid "Deleted {n} books"
 msgstr "Borrar Libro"
 
-#: cps/templates/layout.html:780
+#: cps/templates/layout.html:782
 #, fuzzy
 msgid "Delete books?"
 msgstr "Borrar Libro"
 
-#: cps/templates/layout.html:781
+#: cps/templates/layout.html:783
 #, fuzzy, python-brace-format
 msgid ""
 "This will permanently delete {n} book(s) from your library. This cannot be "
@@ -7501,12 +7501,12 @@ msgstr ""
 "Esto eliminará libros de forma permanente. Los archivos originales se "
 "guardarán como copia de seguridad en"
 
-#: cps/templates/layout.html:782
+#: cps/templates/layout.html:784
 #, fuzzy
 msgid "Select at least one book first."
 msgstr "Selecciona una Estantería"
 
-#: cps/templates/layout.html:783
+#: cps/templates/layout.html:785
 #, fuzzy, python-brace-format
 msgid "Request failed: {err}"
 msgstr "Error de conexión"
