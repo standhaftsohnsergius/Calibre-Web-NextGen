@@ -13,4 +13,4 @@ def health():
 
 # Route modules attach their views to api_v1 on import; import LAST so api_v1 exists.
 from . import auth   # noqa: E402,F401
-# from . import books  # enabled in Task 5
+from . import books  # noqa: E402,F401
