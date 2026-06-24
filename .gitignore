@@ -223,3 +223,10 @@ instance/
 # These can incidentally contain auth headers, CSRF tokens, or API keys
 # from whatever page was open at capture time. Never commit.
 .playwright-mcp/
+
+# Frontend build artifacts (Vite output — build-only, not source)
+frontend/node_modules/
+frontend/*.tsbuildinfo
+frontend/*.js
+frontend/*.d.ts
+cps/static/app/
