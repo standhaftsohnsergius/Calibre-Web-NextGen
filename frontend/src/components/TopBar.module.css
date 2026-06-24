@@ -1,0 +1,49 @@
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-bar);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--elev-1);
+  padding: var(--sp-3) var(--sp-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.brandIcon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.brandText {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semi);
+  line-height: 1;
+}
+
+.brandMain {
+  color: var(--text);
+}
+
+.brandAccent {
+  color: var(--accent);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.userName {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
