@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-06-23 21:21+0000\n"
+"POT-Creation-Date: 2026-06-24 00:07+0000\n"
 "PO-Revision-Date: 2018-08-27 17:06+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -138,7 +138,7 @@ msgstr "អ្នកប្រើប្រាស់រដ្ឋបាល"
 msgid "All"
 msgstr ""
 
-#: cps/admin.py:744 cps/admin.py:1984
+#: cps/admin.py:744 cps/admin.py:1997
 msgid "User not found"
 msgstr ""
 
@@ -157,7 +157,7 @@ msgstr "បង្ហាញទាំងអស់"
 msgid "Malformed request"
 msgstr ""
 
-#: cps/admin.py:820 cps/admin.py:2907
+#: cps/admin.py:820 cps/admin.py:2920
 msgid "Guest Name can't be changed"
 msgstr ""
 
@@ -165,7 +165,7 @@ msgstr ""
 msgid "Guest can't have this role"
 msgstr ""
 
-#: cps/admin.py:848 cps/admin.py:2731
+#: cps/admin.py:848 cps/admin.py:2744
 msgid "No admin user remaining, can't remove admin role"
 msgstr ""
 
@@ -209,7 +209,7 @@ msgstr ""
 msgid "Invalid Restricted Column"
 msgstr ""
 
-#: cps/admin.py:963 cps/admin.py:2582
+#: cps/admin.py:963 cps/admin.py:2595
 msgid "Calibre-Web NextGen configuration updated"
 msgstr ""
 
@@ -334,73 +334,73 @@ msgstr ""
 msgid "client_secrets.json Is Not Configured For Web Application"
 msgstr ""
 
-#: cps/admin.py:1664
+#: cps/admin.py:1677
 msgid "Logfile Location is not Valid, Please Enter Correct Path"
 msgstr ""
 
-#: cps/admin.py:1670
+#: cps/admin.py:1683
 msgid "Access Logfile Location is not Valid, Please Enter Correct Path"
 msgstr ""
 
-#: cps/admin.py:1705
+#: cps/admin.py:1718
 msgid "Please Enter a LDAP Provider, Port, DN and User Object Identifier"
 msgstr ""
 
-#: cps/admin.py:1711
+#: cps/admin.py:1724
 msgid "Please Enter a LDAP Service Account and Password"
 msgstr ""
 
-#: cps/admin.py:1714
+#: cps/admin.py:1727
 msgid "Please Enter a LDAP Service Account"
 msgstr ""
 
-#: cps/admin.py:1719
+#: cps/admin.py:1732
 #, python-format
 msgid "LDAP Group Object Filter Needs to Have One \"%s\" Format Identifier"
 msgstr ""
 
-#: cps/admin.py:1721
+#: cps/admin.py:1734
 msgid "LDAP Group Object Filter Has Unmatched Parenthesis"
 msgstr ""
 
-#: cps/admin.py:1725
+#: cps/admin.py:1738
 #, python-format
 msgid "LDAP User Object Filter needs to Have One \"%s\" Format Identifier"
 msgstr ""
 
-#: cps/admin.py:1727
+#: cps/admin.py:1740
 msgid "LDAP User Object Filter Has Unmatched Parenthesis"
 msgstr ""
 
-#: cps/admin.py:1734
+#: cps/admin.py:1747
 #, python-format
 msgid "LDAP Member User Filter needs to Have One \"%s\" Format Identifier"
 msgstr ""
 
-#: cps/admin.py:1736
+#: cps/admin.py:1749
 msgid "LDAP Member User Filter Has Unmatched Parenthesis"
 msgstr ""
 
-#: cps/admin.py:1743
+#: cps/admin.py:1756
 msgid ""
 "LDAP CACertificate, Certificate or Key Location is not Valid, Please Enter "
 "Correct Path"
 msgstr ""
 
-#: cps/admin.py:1776 cps/templates/admin.html:57
+#: cps/admin.py:1789 cps/templates/admin.html:57
 msgid "Add New User"
 msgstr ""
 
-#: cps/admin.py:1791 cps/templates/admin.html:105
+#: cps/admin.py:1804 cps/templates/admin.html:105
 msgid "Edit Email Server Settings"
 msgstr "ប្តូរការកំណត់ SMTP"
 
-#: cps/admin.py:1810
+#: cps/admin.py:1823
 msgid "Success! Gmail Account Verified."
 msgstr ""
 
-#: cps/admin.py:1834 cps/admin.py:1837 cps/admin.py:2333 cps/admin.py:2565
-#: cps/admin.py:2682 cps/admin.py:2950 cps/editbooks.py:1077
+#: cps/admin.py:1847 cps/admin.py:1850 cps/admin.py:2346 cps/admin.py:2578
+#: cps/admin.py:2695 cps/admin.py:2963 cps/editbooks.py:1077
 #: cps/editbooks.py:1979 cps/shelf.py:116 cps/shelf.py:186 cps/shelf.py:257
 #: cps/shelf.py:321 cps/shelf.py:371 cps/shelf.py:446 cps/shelf.py:529
 #: cps/shelf.py:654 cps/tasks/convert.py:145 cps/web.py:3149
@@ -408,367 +408,367 @@ msgstr ""
 msgid "Oops! Database Error: %(error)s."
 msgstr ""
 
-#: cps/admin.py:1844
+#: cps/admin.py:1857
 #, python-format
 msgid ""
 "Test e-mail queued for sending to %(email)s, please check Tasks for result"
 msgstr ""
 
-#: cps/admin.py:1847
+#: cps/admin.py:1860
 #, python-format
 msgid "There was an error sending the Test e-mail: %(res)s"
 msgstr ""
 
-#: cps/admin.py:1849
+#: cps/admin.py:1862
 msgid "Please configure your e-mail address first..."
 msgstr ""
 
-#: cps/admin.py:1851
+#: cps/admin.py:1864
 msgid "Email Server Settings updated"
 msgstr ""
 
-#: cps/admin.py:1874 cps/templates/admin.html:201
+#: cps/admin.py:1887 cps/templates/admin.html:201
 msgid "Edit Scheduled Tasks Settings"
 msgstr ""
 
-#: cps/admin.py:1886
+#: cps/admin.py:1899
 msgid "Invalid start time for task specified"
 msgstr ""
 
-#: cps/admin.py:1891
+#: cps/admin.py:1904
 msgid "Invalid duration for task specified"
 msgstr ""
 
-#: cps/admin.py:1901
+#: cps/admin.py:1914
 msgid "Scheduled tasks settings updated"
 msgstr ""
 
-#: cps/admin.py:1911 cps/admin.py:2055 cps/admin.py:2946 cps/web.py:2569
+#: cps/admin.py:1924 cps/admin.py:2068 cps/admin.py:2959 cps/web.py:2569
 msgid "Oops! An unknown error occurred. Please try again later."
 msgstr ""
 
-#: cps/admin.py:1915
+#: cps/admin.py:1928
 msgid "Settings DB is not Writeable"
 msgstr ""
 
-#: cps/admin.py:1934 cps/opds.py:309 cps/web.py:3065 cps/web.py:3200
+#: cps/admin.py:1947 cps/opds.py:309 cps/web.py:3065 cps/web.py:3200
 #, fuzzy
 msgid "title"
 msgstr "ចំណងជើង"
 
-#: cps/admin.py:2040 cps/admin.py:2938
+#: cps/admin.py:2053 cps/admin.py:2951
 #, python-format
 msgid "Edit User %(nick)s"
 msgstr "កែប្រែអ្នកប្រើប្រាស់ %(nick)s"
 
-#: cps/admin.py:2052
+#: cps/admin.py:2065
 #, python-format
 msgid "Success! Password for user %(user)s reset"
 msgstr ""
 
-#: cps/admin.py:2058
+#: cps/admin.py:2071
 #, fuzzy
 msgid "Oops! Please configure the SMTP mail settings."
 msgstr "សូមកំណត់អ៊ីមែល SMTP ជាមុនសិន"
 
-#: cps/admin.py:2069
+#: cps/admin.py:2082
 msgid "Logfile viewer"
 msgstr ""
 
-#: cps/admin.py:2145
+#: cps/admin.py:2158
 msgid "Requesting update package"
 msgstr "កំពុងស្នើសុំឯកសារបច្ចុប្បន្នភាព"
 
-#: cps/admin.py:2146
+#: cps/admin.py:2159
 msgid "Downloading update package"
 msgstr "កំពុងទាញយកឯកសារបច្ចុប្បន្នភាព"
 
-#: cps/admin.py:2147
+#: cps/admin.py:2160
 msgid "Unzipping update package"
 msgstr "កំពុងពន្លាឯកសារបច្ចុប្បន្នភាព"
 
-#: cps/admin.py:2148
+#: cps/admin.py:2161
 msgid "Replacing files"
 msgstr ""
 
-#: cps/admin.py:2149
+#: cps/admin.py:2162
 msgid "Database connections are closed"
 msgstr "ទំនាក់ទំនងទៅមូលដ្ឋានទិន្នន័យត្រូវបានផ្តាច់"
 
-#: cps/admin.py:2150
+#: cps/admin.py:2163
 msgid "Stopping server"
 msgstr ""
 
-#: cps/admin.py:2151
+#: cps/admin.py:2164
 msgid "Update finished, please press okay and reload page"
 msgstr "ការធ្វើបច្ចុប្បន្នភាពបានបញ្ចប់ សូមចុច okay រួចបើកទំព័រជាថ្មី"
 
-#: cps/admin.py:2152 cps/admin.py:2153 cps/admin.py:2154 cps/admin.py:2155
-#: cps/admin.py:2156 cps/admin.py:2157
+#: cps/admin.py:2165 cps/admin.py:2166 cps/admin.py:2167 cps/admin.py:2168
+#: cps/admin.py:2169 cps/admin.py:2170
 msgid "Update failed:"
 msgstr ""
 
-#: cps/admin.py:2152 cps/updater.py:421 cps/updater.py:660 cps/updater.py:662
+#: cps/admin.py:2165 cps/updater.py:421 cps/updater.py:660 cps/updater.py:662
 msgid "HTTP Error"
 msgstr ""
 
-#: cps/admin.py:2153 cps/updater.py:423 cps/updater.py:664
+#: cps/admin.py:2166 cps/updater.py:423 cps/updater.py:664
 msgid "Connection error"
 msgstr ""
 
-#: cps/admin.py:2154 cps/updater.py:425 cps/updater.py:666
+#: cps/admin.py:2167 cps/updater.py:425 cps/updater.py:666
 msgid "Timeout while establishing connection"
 msgstr ""
 
-#: cps/admin.py:2155 cps/updater.py:427 cps/updater.py:668
+#: cps/admin.py:2168 cps/updater.py:427 cps/updater.py:668
 msgid "General error"
 msgstr ""
 
-#: cps/admin.py:2156
+#: cps/admin.py:2169
 msgid "Update file could not be saved in temp dir"
 msgstr ""
 
-#: cps/admin.py:2157
+#: cps/admin.py:2170
 msgid "Files could not be replaced during update"
 msgstr ""
 
-#: cps/admin.py:2181
+#: cps/admin.py:2194
 msgid "Failed to extract at least One LDAP User"
 msgstr ""
 
-#: cps/admin.py:2226
+#: cps/admin.py:2239
 msgid "Failed to Create at Least One LDAP User"
 msgstr ""
 
-#: cps/admin.py:2239
+#: cps/admin.py:2252
 #, python-format
 msgid "Error: %(ldaperror)s"
 msgstr ""
 
-#: cps/admin.py:2243
+#: cps/admin.py:2256
 msgid "Error: No user returned in response of LDAP server"
 msgstr ""
 
-#: cps/admin.py:2279
+#: cps/admin.py:2292
 msgid "At Least One LDAP User Not Found in Database"
 msgstr ""
 
-#: cps/admin.py:2281
+#: cps/admin.py:2294
 #, python-brace-format
 msgid "{} User Successfully Imported"
 msgstr ""
 
-#: cps/admin.py:2345
+#: cps/admin.py:2358
 msgid "Books path not valid"
 msgstr ""
 
-#: cps/admin.py:2352
+#: cps/admin.py:2365
 msgid "DB Location is not Valid, Please Enter Correct Path"
 msgstr ""
 
-#: cps/admin.py:2377
+#: cps/admin.py:2390
 msgid "DB is not Writeable"
 msgstr ""
 
-#: cps/admin.py:2390
+#: cps/admin.py:2403
 msgid "Keyfile Location is not Valid, Please Enter Correct Path"
 msgstr ""
 
-#: cps/admin.py:2394
+#: cps/admin.py:2407
 msgid "Certfile Location is not Valid, Please Enter Correct Path"
 msgstr ""
 
-#: cps/admin.py:2486
+#: cps/admin.py:2499
 msgid ""
 "Auto-create users cannot be enabled without enabling reverse proxy "
 "authentication"
 msgstr ""
 
-#: cps/admin.py:2489
+#: cps/admin.py:2502
 msgid "Auto-create users requires a valid reverse proxy header name"
 msgstr ""
 
-#: cps/admin.py:2508 cps/admin.py:2515
+#: cps/admin.py:2521 cps/admin.py:2528
 msgid ""
 "Invalid OAuth Redirect Host format. Please include the full URL with "
 "protocol (e.g., https://your-domain.com)"
 msgstr ""
 
-#: cps/admin.py:2512
+#: cps/admin.py:2525
 msgid ""
 "OAuth Redirect Host should not include a path. Use only the base URL (e.g., "
 "https://your-domain.com)"
 msgstr ""
 
-#: cps/admin.py:2548
+#: cps/admin.py:2561
 msgid "Password length has to be between 1 and 40"
 msgstr ""
 
-#: cps/admin.py:2609
+#: cps/admin.py:2622
 #, fuzzy
 msgid "Database Settings updated"
 msgstr "ទំនាក់ទំនងទៅមូលដ្ឋានទិន្នន័យត្រូវបានផ្តាច់"
 
-#: cps/admin.py:2617
+#: cps/admin.py:2630
 #, fuzzy
 msgid "Database Configuration"
 msgstr "ការកំណត់មុខងារ"
 
-#: cps/admin.py:2637 cps/web.py:2538
+#: cps/admin.py:2650 cps/web.py:2538
 msgid "Oops! Please complete all fields."
 msgstr "សូមបំពេញចន្លោះទាំងអស់!"
 
-#: cps/admin.py:2646
+#: cps/admin.py:2659
 msgid "E-mail is not from valid domain"
 msgstr ""
 
-#: cps/admin.py:2654
+#: cps/admin.py:2667
 msgid "Add new user"
 msgstr "បន្ថែមអ្នកប្រើប្រាស់ថ្មី"
 
-#: cps/admin.py:2672
+#: cps/admin.py:2685
 #, python-format
 msgid "User '%(user)s' created"
 msgstr "បានបង្កើតអ្នកប្រើប្រាស់ ‘%(user)s’"
 
-#: cps/admin.py:2678
+#: cps/admin.py:2691
 msgid "Oops! An account already exists for this Email. or name."
 msgstr ""
 
-#: cps/admin.py:2704
+#: cps/admin.py:2717
 #, python-format
 msgid "User '%(nick)s' deleted"
 msgstr "អ្នកប្រើប្រាស់ ‘%(nick)s’ ត្រូវបានលុប"
 
-#: cps/admin.py:2707
+#: cps/admin.py:2720
 msgid "Can't delete Guest User"
 msgstr ""
 
-#: cps/admin.py:2710
+#: cps/admin.py:2723
 msgid "No admin user remaining, can't delete user"
 msgstr ""
 
-#: cps/admin.py:2901 cps/web.py:2873
+#: cps/admin.py:2914 cps/web.py:2873
 msgid "Email can't be empty and has to be a valid Email"
 msgstr ""
 
-#: cps/admin.py:2942
+#: cps/admin.py:2955
 #, python-format
 msgid "User '%(nick)s' updated"
 msgstr "អ្នកប្រើប្រាស់ ‘%(nick)s’ ត្រូវបានកែប្រែ"
 
-#: cps/admin.py:3007
+#: cps/admin.py:3020
 #, python-format
 msgid ""
 "Connection successful! OIDC discovery endpoint is accessible.%(endpoints)s"
 msgstr ""
 
-#: cps/admin.py:3012
+#: cps/admin.py:3025
 msgid ""
 "Connection failed: OIDC discovery endpoint not found (404). Check if the "
 "base URL is correct."
 msgstr ""
 
-#: cps/admin.py:3014 cps/admin.py:3071
+#: cps/admin.py:3027 cps/admin.py:3084
 #, python-format
 msgid "Connection failed: Server returned status code %(code)s"
 msgstr ""
 
-#: cps/admin.py:3016
+#: cps/admin.py:3029
 msgid ""
 "Connection failed: Could not connect to server. Check the URL and network "
 "connectivity."
 msgstr ""
 
-#: cps/admin.py:3018
+#: cps/admin.py:3031
 msgid ""
 "Connection failed: Request timed out. The server may be slow or unreachable."
 msgstr ""
 
-#: cps/admin.py:3020
+#: cps/admin.py:3033
 msgid ""
 "Connection failed: Server returned invalid JSON. This may not be an OIDC "
 "endpoint."
 msgstr ""
 
-#: cps/admin.py:3023
+#: cps/admin.py:3036
 #, fuzzy, python-format
 msgid "Connection failed: %(error)s"
 msgstr "Ebook-converter បានបរាជ័យ៖ %(error)s"
 
-#: cps/admin.py:3049
+#: cps/admin.py:3062
 #, python-format
 msgid ""
 "Metadata is missing required OIDC fields: %(fields)s. This may not be a "
 "valid OIDC metadata endpoint."
 msgstr ""
 
-#: cps/admin.py:3060
+#: cps/admin.py:3073
 #, python-format
 msgid "Metadata URL is valid! Found %(count)s OAuth endpoints."
 msgstr ""
 
-#: cps/admin.py:3062
+#: cps/admin.py:3075
 msgid " User info endpoint is available."
 msgstr ""
 
-#: cps/admin.py:3064
+#: cps/admin.py:3077
 msgid ""
 " Note: User info endpoint not found - this may cause authentication issues."
 msgstr ""
 
-#: cps/admin.py:3069
+#: cps/admin.py:3082
 msgid "Metadata URL not found (404). Please check the URL is correct."
 msgstr ""
 
-#: cps/admin.py:3073
+#: cps/admin.py:3086
 msgid ""
 "Connection failed: Could not connect to metadata URL. Check the URL and "
 "network connectivity."
 msgstr ""
 
-#: cps/admin.py:3075
+#: cps/admin.py:3088
 msgid "Connection failed: Request timed out."
 msgstr ""
 
-#: cps/admin.py:3077
+#: cps/admin.py:3090
 msgid "Connection failed: Invalid JSON in response."
 msgstr ""
 
-#: cps/admin.py:3080
+#: cps/admin.py:3093
 #, fuzzy
 msgid "An unknown error occurred."
 msgstr "មិនដឹង"
 
-#: cps/admin.py:3092
+#: cps/admin.py:3105
 #, fuzzy
 msgid "Restore already in progress."
 msgstr "Ebook-converter បានបរាជ័យ៖ %(error)s"
 
-#: cps/admin.py:3096
+#: cps/admin.py:3109
 msgid "Restore failed: Calibre library path is not configured."
 msgstr ""
 
-#: cps/admin.py:3101
+#: cps/admin.py:3114
 #, python-format
 msgid "Restore failed: metadata.db not found at %(path)s"
 msgstr ""
 
-#: cps/admin.py:3106
+#: cps/admin.py:3119
 #, python-format
 msgid "Restore failed: app.db not found at %(path)s"
 msgstr ""
 
-#: cps/admin.py:3178 cps/admin.py:3221
+#: cps/admin.py:3191 cps/admin.py:3234
 #, fuzzy, python-format
 msgid "Restore failed: %(err)s"
 msgstr "Ebook-converter បានបរាជ័យ៖ %(error)s"
 
-#: cps/admin.py:3198
+#: cps/admin.py:3211
 msgid "Restore completed but app.db cleanup failed. See logs for details."
 msgstr ""
 
-#: cps/admin.py:3217
+#: cps/admin.py:3230
 #, python-format
 msgid ""
 "Restore complete. Backups and restore log saved to %(dir)s. All book-linked "
@@ -1657,36 +1657,36 @@ msgstr ""
 msgid "Kobo Setup"
 msgstr ""
 
-#: cps/oauth_bb.py:199
+#: cps/oauth_bb.py:235
 #, python-format
 msgid "Register with %(provider)s"
 msgstr ""
 
-#: cps/oauth_bb.py:254
+#: cps/oauth_bb.py:290
 msgid ""
 "Login failed: OAuth token validation error. This may be due to scope "
 "configuration mismatch. Please check your OAuth scopes configuration or "
 "contact your administrator."
 msgstr ""
 
-#: cps/oauth_bb.py:259
+#: cps/oauth_bb.py:295
 msgid "Login failed: OAuth token expired. Please try logging in again."
 msgstr ""
 
-#: cps/oauth_bb.py:263
+#: cps/oauth_bb.py:299
 msgid ""
 "Login failed: Could not connect to the OAuth provider's user info endpoint. "
 "Please try again or contact your administrator."
 msgstr ""
 
-#: cps/oauth_bb.py:268
+#: cps/oauth_bb.py:304
 #, fuzzy
 msgid ""
 "Login failed: The OAuth provider returned invalid user profile data. Please "
 "contact your administrator."
 msgstr "ទីតាំង database Calibre"
 
-#: cps/oauth_bb.py:290
+#: cps/oauth_bb.py:326
 #, python-format
 msgid ""
 "Login failed: OAuth provider response is missing required fields: "
@@ -1694,31 +1694,35 @@ msgid ""
 "administrator."
 msgstr ""
 
-#: cps/oauth_bb.py:316 cps/oauth_bb.py:569
+#: cps/oauth_bb.py:352 cps/oauth_bb.py:610
 msgid "Failed to link OAuth account. Please try again."
 msgstr ""
 
-#: cps/oauth_bb.py:532
+#: cps/oauth_bb.py:385
+msgid "Login failed: your account is not allowed to access this application."
+msgstr ""
+
+#: cps/oauth_bb.py:573
 msgid ""
 "OAuth error: Provider returned invalid user information. Please try again."
 msgstr ""
 
-#: cps/oauth_bb.py:546
+#: cps/oauth_bb.py:587
 #, python-format
 msgid "This %(oauth)s account is already linked to a different user"
 msgstr ""
 
-#: cps/oauth_bb.py:553 cps/remotelogin.py:149
+#: cps/oauth_bb.py:594 cps/remotelogin.py:149
 #, python-format
 msgid "Success! You are now logged in as: %(nickname)s"
 msgstr "ឥឡូវអ្នកបានចូលដោយមានឈ្មោះថា៖ ‘%(nickname)s’"
 
-#: cps/oauth_bb.py:563
+#: cps/oauth_bb.py:604
 #, python-format
 msgid "Link to %(oauth)s Succeeded"
 msgstr ""
 
-#: cps/oauth_bb.py:571
+#: cps/oauth_bb.py:612
 #, python-format
 msgid ""
 "Login failed: No user account is linked to your %(provider)s account. Please "
@@ -1726,85 +1730,85 @@ msgid ""
 "account."
 msgstr ""
 
-#: cps/oauth_bb.py:579
+#: cps/oauth_bb.py:620
 msgid "OAuth authentication failed. Please try again or contact administrator."
 msgstr ""
 
-#: cps/oauth_bb.py:583
+#: cps/oauth_bb.py:624
 msgid "OAuth system error. Please contact administrator."
 msgstr ""
 
-#: cps/oauth_bb.py:616
+#: cps/oauth_bb.py:657
 #, python-format
 msgid "Unlink to %(oauth)s Succeeded"
 msgstr ""
 
-#: cps/oauth_bb.py:621
+#: cps/oauth_bb.py:662
 #, python-format
 msgid "Unlink to %(oauth)s Failed"
 msgstr ""
 
-#: cps/oauth_bb.py:624
+#: cps/oauth_bb.py:665
 #, python-format
 msgid "Not Linked to %(oauth)s"
 msgstr ""
 
-#: cps/oauth_bb.py:829
+#: cps/oauth_bb.py:873
 msgid "Failed to log in with GitHub."
 msgstr ""
 
-#: cps/oauth_bb.py:835
+#: cps/oauth_bb.py:879
 msgid "Failed to fetch user info from GitHub."
 msgstr ""
 
-#: cps/oauth_bb.py:856
+#: cps/oauth_bb.py:900
 msgid "Failed to log in with Google."
 msgstr ""
 
-#: cps/oauth_bb.py:865
+#: cps/oauth_bb.py:909
 msgid "Failed to fetch user info from Google."
 msgstr ""
 
-#: cps/oauth_bb.py:890
+#: cps/oauth_bb.py:934
 msgid "Failed to log in with Generic OAuth."
 msgstr ""
 
-#: cps/oauth_bb.py:906
+#: cps/oauth_bb.py:950
 msgid "OAuth authentication failed: Token validation error. Please try again."
 msgstr ""
 
-#: cps/oauth_bb.py:910
+#: cps/oauth_bb.py:954
 msgid ""
 "OAuth authentication failed due to an unexpected error. Please contact "
 "administrator."
 msgstr ""
 
-#: cps/oauth_bb.py:918 cps/oauth_bb.py:936 cps/oauth_bb.py:954
+#: cps/oauth_bb.py:962 cps/oauth_bb.py:980 cps/oauth_bb.py:998
 msgid ""
 "OAuth error: Invalid redirect URI. If you're experiencing this error "
 "repeatedly, please configure the 'OAuth Redirect Host' setting in Admin > "
 "Basic Configuration > OAuth."
 msgstr ""
 
-#: cps/oauth_bb.py:990
+#: cps/oauth_bb.py:1034
 msgid "GitHub Oauth error, please retry later."
 msgstr ""
 
-#: cps/oauth_bb.py:997
+#: cps/oauth_bb.py:1041
 #, python-brace-format
 msgid "GitHub Oauth error: {}"
 msgstr ""
 
-#: cps/oauth_bb.py:1047
+#: cps/oauth_bb.py:1091
 msgid "Google Oauth error, please retry later."
 msgstr ""
 
-#: cps/oauth_bb.py:1054
+#: cps/oauth_bb.py:1098
 #, python-brace-format
 msgid "Google Oauth error: {}"
 msgstr ""
 
-#: cps/oauth_bb.py:1090 cps/oauth_bb.py:1098
+#: cps/oauth_bb.py:1134 cps/oauth_bb.py:1142
 #, python-brace-format
 msgid "OAuth error: {}"
 msgstr ""
@@ -3459,7 +3463,7 @@ msgstr "បាទ/ចាស"
 #: cps/templates/book_table.html:235 cps/templates/book_table.html:255
 #: cps/templates/book_table.html:275 cps/templates/book_table.html:333
 #: cps/templates/book_table.html:369 cps/templates/config_db.html:110
-#: cps/templates/config_edit.html:663 cps/templates/config_view_edit.html:236
+#: cps/templates/config_edit.html:678 cps/templates/config_view_edit.html:236
 #: cps/templates/cover_picker.html:189
 #: cps/templates/cwa_convert_library.html:23
 #: cps/templates/cwa_epub_fixer.html:40 cps/templates/detail.html:1173
@@ -3783,7 +3787,7 @@ msgid "Fetch Metadata"
 msgstr "មើលទិន្នន័យមេតា"
 
 #: cps/templates/book_edit.html:313 cps/templates/config_db.html:111
-#: cps/templates/config_edit.html:664 cps/templates/config_view_edit.html:237
+#: cps/templates/config_edit.html:679 cps/templates/config_view_edit.html:237
 #: cps/templates/email_edit.html:71 cps/templates/read.html:177
 #: cps/templates/schedule_edit.html:47 cps/templates/shelf_edit.html:36
 #: cps/templates/shelf_reorder.html:38 cps/templates/user_edit.html:585
@@ -4681,76 +4685,106 @@ msgid "JWT field to extract email from"
 msgstr ""
 
 #: cps/templates/config_edit.html:534
-msgid "OAuth group for Admin"
+msgid "OAuth Group Claim"
 msgstr ""
 
 #: cps/templates/config_edit.html:536
+msgid ""
+"OIDC claim containing group names. The claim may be a list, or a comma- or "
+"space-separated string."
+msgstr ""
+
+#: cps/templates/config_edit.html:540
+msgid "Require OAuth Group Membership"
+msgstr ""
+
+#: cps/templates/config_edit.html:541
+msgid ""
+"When enabled, Generic OAuth users must be a member of at least one allowed "
+"group before a user account is created or logged in."
+msgstr ""
+
+#: cps/templates/config_edit.html:544
+msgid "OAuth Allowed Groups"
+msgstr ""
+
+#: cps/templates/config_edit.html:546
+msgid ""
+"Comma- or space-separated OAuth groups allowed to log in via Generic OAuth. "
+"Leave empty only if group membership is not required."
+msgstr ""
+
+#: cps/templates/config_edit.html:549
+msgid "OAuth group for Admin"
+msgstr ""
+
+#: cps/templates/config_edit.html:551
 msgid ""
 "Name of the OAuth group that grants admin privileges. Leave empty to disable "
 "group-based admin management, or use the global setting in Security Settings "
 "for more control."
 msgstr ""
 
-#: cps/templates/config_edit.html:539
+#: cps/templates/config_edit.html:554
 msgid "Login Button Text"
 msgstr ""
 
-#: cps/templates/config_edit.html:545
+#: cps/templates/config_edit.html:560
 #, python-format
 msgid "Obtain %(provider)s OAuth Credential"
 msgstr ""
 
-#: cps/templates/config_edit.html:548
+#: cps/templates/config_edit.html:563
 #, python-format
 msgid "%(provider)s OAuth Client Id"
 msgstr ""
 
-#: cps/templates/config_edit.html:552
+#: cps/templates/config_edit.html:567
 #, python-format
 msgid "%(provider)s OAuth Client Secret"
 msgstr ""
 
-#: cps/templates/config_edit.html:563
+#: cps/templates/config_edit.html:578
 msgid "External binaries"
 msgstr ""
 
-#: cps/templates/config_edit.html:564
+#: cps/templates/config_edit.html:579
 msgid "Path to Calibre Binaries"
 msgstr ""
 
-#: cps/templates/config_edit.html:572
+#: cps/templates/config_edit.html:587
 msgid "Calibre E-Book Converter Settings"
 msgstr ""
 
-#: cps/templates/config_edit.html:575
+#: cps/templates/config_edit.html:590
 msgid "Path to Kepubify E-Book Converter"
 msgstr ""
 
-#: cps/templates/config_edit.html:583
+#: cps/templates/config_edit.html:598
 #, fuzzy
 msgid "Location of Unrar binary"
 msgstr "ទីតាំង database របស់ Calibre"
 
-#: cps/templates/config_edit.html:594
+#: cps/templates/config_edit.html:609
 #, fuzzy
 msgid "Security Settings"
 msgstr "ការកំណត់"
 
-#: cps/templates/config_edit.html:597
+#: cps/templates/config_edit.html:612
 msgid "Disable Standard Login (Username/Password)"
 msgstr ""
 
-#: cps/templates/config_edit.html:598
+#: cps/templates/config_edit.html:613
 msgid ""
 "Hides the standard login form. Users must log in via OAuth or LDAP. Ensure "
 "you have a working alternative login method before enabling."
 msgstr ""
 
-#: cps/templates/config_edit.html:602
+#: cps/templates/config_edit.html:617
 msgid "Enable OAuth Group-Based Admin Role Management"
 msgstr ""
 
-#: cps/templates/config_edit.html:603
+#: cps/templates/config_edit.html:618
 msgid ""
 "When enabled, admin privileges are automatically granted or revoked based on "
 "OAuth group membership. Disable this to manually manage admin roles in the "
@@ -4758,59 +4792,59 @@ msgid ""
 "assignments."
 msgstr ""
 
-#: cps/templates/config_edit.html:607
+#: cps/templates/config_edit.html:622
 msgid "Limit failed login attempts"
 msgstr ""
 
-#: cps/templates/config_edit.html:611
+#: cps/templates/config_edit.html:626
 msgid "Configure Backend for Limiter"
 msgstr ""
 
-#: cps/templates/config_edit.html:615
+#: cps/templates/config_edit.html:630
 msgid "Options for Limiter Backend"
 msgstr ""
 
-#: cps/templates/config_edit.html:621
+#: cps/templates/config_edit.html:636
 msgid "Check if file extensions matches file content on upload"
 msgstr ""
 
-#: cps/templates/config_edit.html:624
+#: cps/templates/config_edit.html:639
 msgid "Session protection"
 msgstr ""
 
-#: cps/templates/config_edit.html:626
+#: cps/templates/config_edit.html:641
 msgid "Basic"
 msgstr ""
 
-#: cps/templates/config_edit.html:627
+#: cps/templates/config_edit.html:642
 msgid "Strong"
 msgstr ""
 
-#: cps/templates/config_edit.html:632
+#: cps/templates/config_edit.html:647
 msgid "User Password policy"
 msgstr ""
 
-#: cps/templates/config_edit.html:636
+#: cps/templates/config_edit.html:651
 msgid "Minimum password length"
 msgstr ""
 
-#: cps/templates/config_edit.html:641
+#: cps/templates/config_edit.html:656
 msgid "Enforce number"
 msgstr ""
 
-#: cps/templates/config_edit.html:645
+#: cps/templates/config_edit.html:660
 msgid "Enforce lowercase characters"
 msgstr ""
 
-#: cps/templates/config_edit.html:649
+#: cps/templates/config_edit.html:664
 msgid "Enforce uppercase characters"
 msgstr ""
 
-#: cps/templates/config_edit.html:653
+#: cps/templates/config_edit.html:668
 msgid "Enforce characters (needed For Chinese/Japanese/Korean Characters)"
 msgstr ""
 
-#: cps/templates/config_edit.html:657
+#: cps/templates/config_edit.html:672
 msgid "Enforce special characters"
 msgstr ""
 
