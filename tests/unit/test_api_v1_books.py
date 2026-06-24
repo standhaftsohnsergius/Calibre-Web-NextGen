@@ -123,17 +123,27 @@ def test_list_books_sort_unknown_defaults_to_new():
 
 @pytest.mark.unit
 def test_list_books_search():
-    """GET /api/v1/books?search=dune routes through get_search_results and total==1."""
+    """GET /api/v1/books?search=dune routes through get_search_results and total==1.
+
+    Regression (real-library 500): get_search_results → order_authors(combined=True)
+    returns SQLAlchemy Row objects whose book is under .Books, NOT at the top level.
+    The view must normalize to plain Books before calling serialize_book_list_item —
+    otherwise book.id raises AttributeError.  This test returns a Row-shaped object
+    (SimpleNamespace with a .Books sub-namespace) so it fails against code that passes
+    entries straight to serialize_book_list_item, and passes after the .Books extraction.
+    """
     from cps.api import books as books_mod
 
-    fake_book = SimpleNamespace(id=42, title="Dune", series_index="1.0", has_cover=1,
-                                authors=[SimpleNamespace(name="Frank Herbert")],
-                                series=[], data=[SimpleNamespace(format="EPUB")])
+    inner_book = SimpleNamespace(id=42, title="Dune", series_index="1.0", has_cover=1,
+                                 authors=[SimpleNamespace(name="Frank Herbert")],
+                                 series=[], data=[SimpleNamespace(format="EPUB")])
+    # Simulate the Row object: has .Books (the ORM object) plus read/archive columns
+    row_entry = SimpleNamespace(Books=inner_book, is_archived=None, read_status=None)
 
     app = flask.Flask(__name__)
     with app.test_request_context("/api/v1/books?search=dune"):
         with patch.object(books_mod.calibre_db, "get_search_results",
-                          return_value=([fake_book], 1, None)) as mock_search, \
+                          return_value=([row_entry], 1, None)) as mock_search, \
              patch.object(books_mod.config, "config_books_per_page", 60, create=True), \
              patch.object(books_mod.config, "config_read_column", 0, create=True):
             view = inspect.unwrap(books_mod.list_books)
@@ -149,6 +159,9 @@ def test_list_books_search():
     data = json.loads(resp.get_data(as_text=True))
     assert data["total"] == 1
     assert len(data["items"]) == 1
+    assert data["items"][0]["id"] == 42, (
+        "id must come from .Books.id — if this fails, the Row normalization is missing"
+    )
     assert data["items"][0]["title"] == "Dune"
 
 

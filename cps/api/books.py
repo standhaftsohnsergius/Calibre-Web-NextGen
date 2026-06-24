@@ -43,8 +43,13 @@ def list_books():
         entries, total, _pagination = calibre_db.get_search_results(
             search, config, offset, [order], per_page, *join
         )
+        # get_search_results → order_authors(combined=True) returns the raw
+        # SQLAlchemy Row objects from generate_linked_query (Books, is_archived,
+        # read_status).  Each Row exposes the Books ORM object as .Books.
+        # Normalize here so serialize_book_list_item receives plain Books objects.
+        books = [getattr(e, "Books", e) for e in entries]
         return jsonify({
-            "items": [serialize_book_list_item(b) for b in entries],
+            "items": [serialize_book_list_item(b) for b in books],
             "page": page,
             "per_page": per_page,
             "total": total,
