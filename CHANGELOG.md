@@ -16,6 +16,8 @@ is for things you can see or feel when running the app.
 
 ## [Unreleased]
 
+## [v4.0.171] - 2026-06-24
+
 ### Added
 - **Choose what permissions new Generic OAuth users get.** Instead of every
   OAuth sign-up inheriting the one global default role, admins can now set a
