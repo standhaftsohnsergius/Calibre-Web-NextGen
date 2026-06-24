@@ -27,3 +27,22 @@ def auth_me():
     if not current_user.is_authenticated:
         return jsonify({"error": {"code": "unauthenticated", "message": "Login required"}}), 401
     return jsonify(serialize_user(current_user))
+
+
+@api_v1.route("/auth/login", methods=["POST"])
+def auth_login():
+    data = request.get_json(silent=True) or request.form
+    username = (data.get("username") or "").strip().lower()
+    password = data.get("password") or ""
+    user = ub.session.query(ub.User).filter(func.lower(ub.User.name) == username).first()
+    if user and not user.role_anonymous() and check_password_hash(str(user.password), password):
+        login_user(user, remember=bool(data.get("remember")))
+        return jsonify(serialize_user(user))
+    return jsonify({"error": {"code": "invalid_credentials",
+                              "message": "Invalid username or password"}}), 401
+
+
+@api_v1.route("/auth/logout", methods=["POST"])
+def auth_logout():
+    logout_user()
+    return "", 204
