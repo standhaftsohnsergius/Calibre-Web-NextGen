@@ -16,6 +16,8 @@ is for things you can see or feel when running the app.
 
 ## [Unreleased]
 
+## [v4.0.172] - 2026-06-25
+
 ### Added
 - **Books you're partway through now show a "Currently reading" badge.** If you
   read on KOReader (or a Kobo) and your progress syncs back, the book used to
