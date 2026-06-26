@@ -121,6 +121,25 @@ export interface AdvSearchResult {
   criteria: string;
 }
 
+export interface Account {
+  name: string;
+  email: string;
+  kindle_mail: string;
+  locale: string;
+  default_language: string;
+  role: Record<string, boolean>;
+  can_change_password: boolean;
+  locales: { id: string; name: string }[];
+  languages: { id: string; name: string }[];
+}
+
+export interface ProfileUpdate {
+  email?: string;
+  kindle_mail?: string;
+  locale?: string;
+  default_language?: string;
+}
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {
@@ -177,7 +196,15 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
   let csrf = await getCsrf();
   let res = await doPost(csrf);
 
-  if (res.status === 400) {
+  // A stale/invalid CSRF token is rejected app-side as an HTML 400 (the global
+  // error page), NOT as one of our JSON {error:{…}} envelopes. Only that case
+  // warrants refreshing the token and replaying the request once. A JSON 400 is
+  // one of our own validation errors (wrong password, bad email, …) and must
+  // surface to the caller — replaying it would silently double-submit the
+  // request (doubled backend work + audit entries). Discriminate on content-type.
+  const isJson400 = (res.status === 400)
+    && (res.headers.get('content-type') || '').includes('application/json');
+  if (res.status === 400 && !isJson400) {
     clearCsrf();
     csrf = await getCsrf();
     res = await doPost(csrf);

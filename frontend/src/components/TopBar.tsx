@@ -27,7 +27,9 @@ export function TopBar({ userName, onLogout, onMenu }: TopBarProps) {
         </Link>
       </div>
       <div className={styles.right}>
-        <span className={styles.userName}>{userName}</span>
+        <Link href="/account" className={styles.userName} title="Account & settings">
+          {userName}
+        </Link>
         <Button variant="ghost" size="sm" onClick={onLogout}>
           <LogOut size={16} />
           Sign out

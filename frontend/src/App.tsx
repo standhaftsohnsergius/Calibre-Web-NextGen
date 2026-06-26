@@ -7,6 +7,7 @@ import { BrowseList } from './pages/BrowseList';
 import { Shelves } from './pages/Shelves';
 import { Shelf } from './pages/Shelf';
 import { AdvancedSearch } from './pages/AdvancedSearch';
+import { Account } from './pages/Account';
 import { AppShell } from './components/AppShell';
 import { SpinnerCentered } from './components/Spinner';
 
@@ -60,6 +61,9 @@ export function App() {
 
           {/* Advanced search */}
           <Route path="/search">{() => <AdvancedSearch />}</Route>
+
+          {/* Account / settings */}
+          <Route path="/account">{() => <Account />}</Route>
 
           <Route path="/">{() => <Catalog />}</Route>
         </Switch>

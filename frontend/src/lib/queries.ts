@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiGet, apiPost, ApiError } from './api';
 import type {
   Me, BooksPage, BookDetail, EntityList, Shelf, ShelfDetail,
-  SearchOptions, AdvancedSearchParams, AdvSearchResult,
+  SearchOptions, AdvancedSearchParams, AdvSearchResult, Account, ProfileUpdate,
 } from './api';
 
 /** Entity kinds the catalog can be filtered by. Singular here; the browse-list
@@ -169,6 +169,34 @@ export function useDeleteShelf() {
   return useMutation({
     mutationFn: (id: number) => apiPost(`/api/v1/shelves/${id}/delete`),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['shelves'] }),
+  });
+}
+
+// ── Account ──────────────────────────────────────────────────────────────────
+
+export function useAccount() {
+  return useQuery<Account>({
+    queryKey: ['account'],
+    queryFn: () => apiGet<Account>('/api/v1/account'),
+  });
+}
+
+export function useUpdateProfile() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: ProfileUpdate) => apiPost<Account>('/api/v1/account/profile', vars),
+    onSuccess: (data) => {
+      qc.setQueryData(['account'], data);
+      // name/locale also surface in the top bar via useMe
+      void qc.invalidateQueries({ queryKey: ['me'] });
+    },
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: (vars: { current_password: string; new_password: string }) =>
+      apiPost('/api/v1/account/password', vars),
   });
 }
 

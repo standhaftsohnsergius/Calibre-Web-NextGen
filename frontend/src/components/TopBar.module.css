@@ -74,4 +74,9 @@
 .userName {
   font-size: var(--fs-sm);
   color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.userName:hover {
+  color: var(--accent);
 }
