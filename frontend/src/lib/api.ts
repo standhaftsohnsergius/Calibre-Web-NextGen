@@ -156,6 +156,11 @@ export interface BookMetadata {
 
 export type MetadataUpdate = Partial<Omit<BookMetadata, 'id' | 'errors'>>;
 
+export interface UploadResult {
+  queued: string[];
+  errors: { filename: string; error: string }[];
+}
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {
@@ -239,5 +244,39 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
   }
 
   if (res.status === 204) return undefined as unknown as T;
+  return res.json() as Promise<T>;
+}
+
+/** Multipart POST (file upload). Mirrors apiPost's CSRF handling, but lets the
+ *  browser set the multipart Content-Type + boundary (so we must NOT set it). */
+export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
+  const doPost = async (csrf: string): Promise<Response> =>
+    fetch(path, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'X-CSRFToken': csrf },
+      body: formData,
+    });
+
+  let csrf = await getCsrf();
+  let res = await doPost(csrf);
+
+  const isJson400 = res.status === 400
+    && (res.headers.get('content-type') || '').includes('application/json');
+  if (res.status === 400 && !isJson400) {
+    clearCsrf();
+    csrf = await getCsrf();
+    res = await doPost(csrf);
+  }
+
+  if (!res.ok) {
+    let msg = res.statusText;
+    try {
+      const d = await res.json() as { error?: string | { message?: string } };
+      if (typeof d.error === 'string') msg = d.error;
+      else if (d.error?.message) msg = d.error.message;
+    } catch { /* non-JSON body — keep statusText */ }
+    throw new ApiError(res.status, msg);
+  }
   return res.json() as Promise<T>;
 }

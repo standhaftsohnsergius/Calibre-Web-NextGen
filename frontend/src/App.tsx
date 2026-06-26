@@ -10,6 +10,7 @@ import { Shelf } from './pages/Shelf';
 import { AdvancedSearch } from './pages/AdvancedSearch';
 import { Account } from './pages/Account';
 import { EditBook } from './pages/EditBook';
+import { Upload } from './pages/Upload';
 import { AppShell } from './components/AppShell';
 import { SpinnerCentered } from './components/Spinner';
 
@@ -83,6 +84,9 @@ export function App() {
 
           {/* Account / settings */}
           <Route path="/account">{() => <Account />}</Route>
+
+          {/* Upload */}
+          <Route path="/upload">{() => <Upload />}</Route>
 
           <Route path="/">{() => <Catalog />}</Route>
             </Switch>

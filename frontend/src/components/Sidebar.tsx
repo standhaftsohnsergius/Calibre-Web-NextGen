@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'wouter';
-import { Library, Users, Layers, Tag, Building2, Languages, BookCopy } from 'lucide-react';
-import { useShelves } from '../lib/queries';
+import { Library, Users, Layers, Tag, Building2, Languages, BookCopy, UploadCloud } from 'lucide-react';
+import { useShelves, useMe } from '../lib/queries';
 import styles from './Sidebar.module.css';
 
 const NAV = [
@@ -27,6 +27,8 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
   const [location] = useLocation();
   const { data: shelvesData } = useShelves();
   const shelves = shelvesData?.items ?? [];
+  const me = useMe().data;
+  const canUpload = !!me?.role?.upload;
 
   return (
     <>
@@ -50,6 +52,22 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
             );
           })}
         </ul>
+
+        {canUpload && (
+          <ul className={styles.list}>
+            <li>
+              <Link
+                href="/upload"
+                className={isActive(location, '/upload', true) ? styles.itemActive : styles.item}
+                aria-current={isActive(location, '/upload', true) ? 'page' : undefined}
+                onClick={onNavigate}
+              >
+                <UploadCloud size={18} className={styles.icon} />
+                <span>Upload</span>
+              </Link>
+            </li>
+          </ul>
+        )}
 
         {/* Shelves: header links to the manage page; user's shelves listed below. */}
         <div className={styles.sectionHeader}>

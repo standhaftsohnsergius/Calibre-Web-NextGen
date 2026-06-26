@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPost, ApiError } from './api';
+import { apiGet, apiPost, apiUpload, ApiError } from './api';
 import type {
   Me, BooksPage, BookDetail, EntityList, Shelf, ShelfDetail,
   SearchOptions, AdvancedSearchParams, AdvSearchResult, Account, ProfileUpdate,
-  BookMetadata, MetadataUpdate,
+  BookMetadata, MetadataUpdate, UploadResult,
 } from './api';
 
 /** Entity kinds the catalog can be filtered by. Singular here; the browse-list
@@ -170,6 +170,23 @@ export function useDeleteShelf() {
   return useMutation({
     mutationFn: (id: number) => apiPost(`/api/v1/shelves/${id}/delete`),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['shelves'] }),
+  });
+}
+
+// ── Upload ───────────────────────────────────────────────────────────────────
+
+export function useUploadBooks() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (files: File[]) => {
+      const fd = new FormData();
+      for (const f of files) fd.append('file', f);
+      return apiUpload<UploadResult>('/api/v1/upload', fd);
+    },
+    onSuccess: () => {
+      // The library will populate as ingest processes; nudge the catalog.
+      void qc.invalidateQueries({ queryKey: ['books'] });
+    },
   });
 }
 
