@@ -17,6 +17,26 @@ is for things you can see or feel when running the app.
 ## [Unreleased]
 
 ### Added
+- **Email your users straight from the admin area.** A new "Email Your Users"
+  page (Admin → Email Your Users) lets you write a message and send it by email
+  to everyone — or just the people you pick. Handy for announcing new books or
+  server updates to the people sharing your library. It uses the same mail
+  server you already set up for password resets, formats with HTML (links,
+  bold) with an automatic plain-text fallback, can pull in your announcement
+  banner text with one click, and has a "Send test to me" button so you can
+  preview before sending. Messages send in the background — check Tasks for
+  delivery. Requested by @froggybottomboys.
+
+### Fixed
+- **The "Discover (Random Books)" row now actually appears.** Turning on "Show
+  Random Books in Detail View" did nothing — a leftover theme rule hid the
+  random-books row for everyone, so the "No. of Random Books to Display" setting
+  had no visible effect. The row now shows as a "Discover (Random Books)" strip
+  above your book list, on desktop and mobile. Reported by @chloeroform.
+
+## [v4.0.172] - 2026-06-25
+
+### Added
 - **Books you're partway through now show a "Currently reading" badge.** If you
   read on KOReader (or a Kobo) and your progress syncs back, the book used to
   look exactly like one you'd never opened — the web only marked books as read
@@ -24,6 +44,13 @@ is for things you can see or feel when running the app.
   reading" marker on its detail page and a badge on its cover in the grid,
   shelves, search and author pages, so synced reading progress is actually
   visible. Reported by @barukh27.
+
+### Fixed
+- **Sorting the Books List by Title no longer breaks the table.** In the "Books
+  List" table view, clicking the Title, Title Sort, or Series ID column header
+  produced an empty table and flooded the log with `no such column: title`
+  errors — only Author sorting worked. The table now sorts correctly by every
+  column. Reported by @Mr-Me-torn.
 
 ## [v4.0.171] - 2026-06-24
 
