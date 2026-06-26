@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiGet, apiPost, ApiError } from './api';
-import type { Me, BooksPage, BookDetail, EntityList, Shelf, ShelfDetail } from './api';
+import type {
+  Me, BooksPage, BookDetail, EntityList, Shelf, ShelfDetail,
+  SearchOptions, AdvancedSearchParams, AdvSearchResult,
+} from './api';
 
 /** Entity kinds the catalog can be filtered by. Singular here; the browse-list
  *  endpoints/routes use the plural (author -> authors). */
@@ -166,6 +169,27 @@ export function useDeleteShelf() {
   return useMutation({
     mutationFn: (id: number) => apiPost(`/api/v1/shelves/${id}/delete`),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['shelves'] }),
+  });
+}
+
+// ── Advanced search ──────────────────────────────────────────────────────────
+
+export function useSearchOptions() {
+  return useQuery<SearchOptions>({
+    queryKey: ['search-options'],
+    queryFn: () => apiGet<SearchOptions>('/api/v1/search/options'),
+    staleTime: 60000,
+  });
+}
+
+/** Run advanced search. `params` is null until the user submits, which keeps the
+ *  query disabled (and the results pane empty) on first load. */
+export function useAdvancedSearch(params: AdvancedSearchParams | null, page: number) {
+  return useQuery<AdvSearchResult>({
+    queryKey: ['adv-search', params, page],
+    queryFn: () => apiPost<AdvSearchResult>('/api/v1/search/advanced', { ...params, page, per_page: 24 }),
+    enabled: params !== null,
+    placeholderData: (prev) => prev,
   });
 }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'wouter';
-import { Search, ChevronLeft } from 'lucide-react';
+import { Search, ChevronLeft, SlidersHorizontal } from 'lucide-react';
 import { BookCard } from '../components/BookCard';
 import { Button } from '../components/Button';
 import { Spinner, SpinnerCentered } from '../components/Spinner';
@@ -149,6 +149,13 @@ export function Catalog({ entityKind, entityId }: CatalogProps) {
               aria-label="Search books"
             />
           </div>
+        )}
+
+        {!filtered && (
+          <Link href="/search" className={styles.advancedLink} title="Advanced search">
+            <SlidersHorizontal size={15} />
+            <span className={styles.advancedLabel}>Advanced</span>
+          </Link>
         )}
 
         {/* Read-status segmented control (disabled while a text search is active,

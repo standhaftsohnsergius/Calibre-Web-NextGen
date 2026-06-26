@@ -85,6 +85,42 @@ export interface ShelfDetail extends Shelf {
   can_edit: boolean;
 }
 
+export interface SearchOptions {
+  tags: EntityRef[];
+  series: EntityRef[];
+  languages: EntityRef[];
+  formats: string[];
+}
+
+export interface AdvancedSearchParams {
+  title?: string;
+  authors?: string;
+  publisher?: string;
+  comments?: string;
+  read_status?: 'all' | 'read' | 'unread';
+  publishstart?: string;
+  publishend?: string;
+  rating_high?: string;
+  rating_low?: string;
+  include_tag?: (string | number)[];
+  exclude_tag?: (string | number)[];
+  include_serie?: (string | number)[];
+  exclude_serie?: (string | number)[];
+  include_language?: (string | number)[];
+  exclude_language?: (string | number)[];
+  include_extension?: string[];
+  exclude_extension?: string[];
+  sort?: string;
+}
+
+export interface AdvSearchResult {
+  items: Book[];
+  page: number;
+  per_page: number;
+  total: number;
+  criteria: string;
+}
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {

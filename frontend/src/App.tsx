@@ -6,6 +6,7 @@ import { BookDetail } from './pages/BookDetail';
 import { BrowseList } from './pages/BrowseList';
 import { Shelves } from './pages/Shelves';
 import { Shelf } from './pages/Shelf';
+import { AdvancedSearch } from './pages/AdvancedSearch';
 import { AppShell } from './components/AppShell';
 import { SpinnerCentered } from './components/Spinner';
 
@@ -56,6 +57,9 @@ export function App() {
           {/* Shelves */}
           <Route path="/shelves">{() => <Shelves />}</Route>
           <Route path="/shelf/:id">{(p) => <Shelf id={p.id} />}</Route>
+
+          {/* Advanced search */}
+          <Route path="/search">{() => <AdvancedSearch />}</Route>
 
           <Route path="/">{() => <Catalog />}</Route>
         </Switch>

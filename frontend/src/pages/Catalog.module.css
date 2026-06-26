@@ -123,6 +123,30 @@
   -webkit-appearance: none;
 }
 
+.advancedLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-3);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.advancedLink:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Hide the "Advanced" word on narrow screens to keep the toolbar compact. */
+@media (max-width: 520px) {
+  .advancedLabel { display: none; }
+}
+
 /* Read-status segmented control */
 .segmented {
   display: inline-flex;
