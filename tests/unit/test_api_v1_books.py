@@ -315,3 +315,30 @@ def test_list_books_no_filter_passes_true_db_filter():
     assert positional[3] is True, (
         f"db_filter should be True (unfiltered) with no params, got {positional[3]!r}"
     )
+
+
+@pytest.mark.unit
+def test_build_entity_filter_language_none_negates_relationship():
+    """language='none' (the synthetic 'no language' category from
+    speaking_language) must compile to a NOT-EXISTS over Books.languages, not a
+    lang_code == 'none' comparison (which matches nothing)."""
+    from cps.api.books import _build_entity_filter
+
+    none_filter = _build_entity_filter(None, None, None, None, "none")
+    eng_filter = _build_entity_filter(None, None, None, None, "eng")
+
+    none_sql = str(none_filter.compile(compile_kwargs={"literal_binds": True}))
+    eng_sql = str(eng_filter.compile(compile_kwargs={"literal_binds": True}))
+
+    assert "NOT" in none_sql.upper(), f"language=none must negate, got: {none_sql}"
+    # the eng path keys off lang_code; the none path must not
+    assert "'eng'" in eng_sql
+    assert "'none'" not in none_sql, (
+        f"language=none must not compare lang_code to 'none', got: {none_sql}"
+    )
+
+
+@pytest.mark.unit
+def test_build_entity_filter_no_params_returns_true():
+    from cps.api.books import _build_entity_filter
+    assert _build_entity_filter(None, None, None, None, None) is True

@@ -80,7 +80,13 @@ export async function apiGet<T>(path: string): Promise<T> {
   const res = await fetch(path, { credentials: 'include' });
   if (!res.ok) {
     let msg = res.statusText;
-    try { const d = await res.json() as { error?: string }; msg = d.error ?? msg; } catch { /* ignore */ }
+    // API errors are shaped { error: { code, message } }; fall back to a bare
+    // string error or the HTTP status text if the body isn't that shape.
+    try {
+      const d = await res.json() as { error?: string | { message?: string } };
+      if (typeof d.error === 'string') msg = d.error;
+      else if (d.error?.message) msg = d.error.message;
+    } catch { /* non-JSON body — keep statusText */ }
     throw new ApiError(res.status, msg);
   }
   return res.json() as Promise<T>;
@@ -110,7 +116,13 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
 
   if (!res.ok) {
     let msg = res.statusText;
-    try { const d = await res.json() as { error?: string }; msg = d.error ?? msg; } catch { /* ignore */ }
+    // API errors are shaped { error: { code, message } }; fall back to a bare
+    // string error or the HTTP status text if the body isn't that shape.
+    try {
+      const d = await res.json() as { error?: string | { message?: string } };
+      if (typeof d.error === 'string') msg = d.error;
+      else if (d.error?.message) msg = d.error.message;
+    } catch { /* non-JSON body — keep statusText */ }
     throw new ApiError(res.status, msg);
   }
 

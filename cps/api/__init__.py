@@ -3,14 +3,52 @@
 """Versioned JSON API for the NextGen SPA frontend. See notes/FRONTEND-REBUILD-DESIGN.md."""
 import traceback
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request, g
 from werkzeug.exceptions import HTTPException
 
-from .. import logger
+from .. import logger, config
+from ..cw_login import current_user
+from ..usermanagement import load_user_from_reverse_proxy_header
 
 log = logger.create()
 
 api_v1 = Blueprint("api_v1", __name__, url_prefix="/api/v1")
+
+# Endpoints reachable without an authenticated session. Everything else under
+# /api/v1 requires auth (or anonymous-browse mode). auth_me/auth_logout handle
+# the unauthenticated case gracefully themselves, so they're allowed through too.
+_PUBLIC_ENDPOINTS = {
+    "api_v1.health",
+    "api_v1.auth_csrf",
+    "api_v1.auth_login",
+    "api_v1.auth_me",
+    "api_v1.auth_logout",
+}
+
+
+@api_v1.before_request
+def _require_api_auth():
+    """Gate the whole API surface, returning JSON 401 (never an HTML 302) when
+    unauthenticated. Mirrors usermanagement.login_required_if_no_ano so behaviour
+    matches the rest of the app (reverse-proxy header login -> anon-browse ->
+    session), but an SPA fetch gets a clean 401 it can act on instead of a redirect
+    to the HTML login page (which would surface as a JSON parse error on session
+    expiry). The per-route @login_required_if_no_ano decorators remain as
+    defence-in-depth and per-route documentation."""
+    if request.endpoint in _PUBLIC_ENDPOINTS:
+        return None
+    if config.config_allow_reverse_proxy_header_login:
+        user = load_user_from_reverse_proxy_header(request)
+        if user:
+            g.flask_httpauth_user = user
+            return None
+        g.flask_httpauth_user = None
+    if config.config_anonbrowse == 1:
+        return None
+    if current_user.is_authenticated:
+        return None
+    return jsonify({"error": {"code": "unauthorized",
+                              "message": "Authentication required"}}), 401
 
 
 @api_v1.errorhandler(HTTPException)

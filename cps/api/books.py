@@ -52,7 +52,13 @@ def _build_entity_filter(author, series, tag, publisher, language):
     if publisher is not None:
         parts.append(db.Books.publishers.any(db.Publishers.id == publisher))
     if language is not None:
-        parts.append(db.Books.languages.any(db.Languages.lang_code == language))
+        # "none" is the synthetic category speaking_language() appends for books
+        # with no language link — match books that have no Languages rows, not a
+        # (non-existent) lang_code == "none".
+        if language == "none":
+            parts.append(~db.Books.languages.any())
+        else:
+            parts.append(db.Books.languages.any(db.Languages.lang_code == language))
     if not parts:
         return True
     if len(parts) == 1:

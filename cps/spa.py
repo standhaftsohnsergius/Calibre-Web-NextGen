@@ -18,6 +18,7 @@ def _spa_enabled():
 
 
 @spa.route("/app")
+@spa.route("/app/")
 @spa.route("/app/<path:path>")
 def spa_shell(path=""):
     if not _spa_enabled():
