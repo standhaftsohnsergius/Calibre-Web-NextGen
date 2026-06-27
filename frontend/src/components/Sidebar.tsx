@@ -3,6 +3,7 @@ import {
   Library, Users, Layers, Tag, Building2, Languages, BookCopy, UploadCloud, Shield,
 } from 'lucide-react';
 import { useShelves, useMe } from '../lib/queries';
+import { useT } from '../lib/i18n';
 import styles from './Sidebar.module.css';
 
 const NAV = [
@@ -27,6 +28,7 @@ interface SidebarProps {
 
 export function Sidebar({ open, onNavigate }: SidebarProps) {
   const [location] = useLocation();
+  const t = useT();
   const { data: shelvesData } = useShelves();
   const shelves = shelvesData?.items ?? [];
   const me = useMe().data;
@@ -49,7 +51,7 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
                   onClick={onNavigate}
                 >
                   <Icon size={18} className={styles.icon} />
-                  <span>{label}</span>
+                  <span>{t(label)}</span>
                 </Link>
               </li>
             );
@@ -67,7 +69,7 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
                   onClick={onNavigate}
                 >
                   <UploadCloud size={18} className={styles.icon} />
-                  <span>Upload</span>
+                  <span>{t('Upload')}</span>
                 </Link>
               </li>
             )}
@@ -80,7 +82,7 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
                   onClick={onNavigate}
                 >
                   <Shield size={18} className={styles.icon} />
-                  <span>Admin</span>
+                  <span>{t('Admin')}</span>
                 </Link>
               </li>
             )}
@@ -95,7 +97,7 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
             onClick={onNavigate}
           >
             <BookCopy size={16} className={styles.icon} />
-            <span>Shelves</span>
+            <span>{t('Shelves')}</span>
           </Link>
         </div>
 

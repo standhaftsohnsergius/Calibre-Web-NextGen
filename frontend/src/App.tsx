@@ -14,6 +14,7 @@ import { Upload } from './pages/Upload';
 import { Admin } from './pages/Admin';
 import { AppShell } from './components/AppShell';
 import { SpinnerCentered } from './components/Spinner';
+import { I18nProvider } from './lib/i18n';
 
 // The reader pulls in epub.js (large) — load it only when a book is opened so it
 // stays out of the initial bundle.
@@ -32,6 +33,7 @@ export function App() {
   }
 
   return (
+    <I18nProvider locale={me.locale}>
     <Router base="/app">
       <Switch>
         {/* Full-screen reader — outside the app shell (no sidebar/topbar). */}
@@ -98,5 +100,6 @@ export function App() {
         </Route>
       </Switch>
     </Router>
+    </I18nProvider>
   );
 }
