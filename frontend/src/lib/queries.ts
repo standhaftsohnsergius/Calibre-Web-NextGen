@@ -373,7 +373,14 @@ export function useBulkActions() {
     mutationFn: (ids: number[]) => settle(ids.map((id) => apiPost(`/api/v1/books/${id}/delete`))),
     onSuccess: refresh,
   });
-  return { markRead, addToShelf, remove };
+  // Bulk metadata: apply the same partial field set to every selected book via
+  // the per-book metadata endpoint (replace semantics for the filled fields).
+  const setMetadata = useMutation({
+    mutationFn: (v: { ids: number[]; fields: MetadataUpdate }) =>
+      settle(v.ids.map((id) => apiPost(`/api/v1/books/${id}/metadata`, v.fields))),
+    onSuccess: refresh,
+  });
+  return { markRead, addToShelf, remove, setMetadata };
 }
 
 // ── Upload ───────────────────────────────────────────────────────────────────

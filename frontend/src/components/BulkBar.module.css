@@ -100,3 +100,22 @@
   .bar { padding-left: var(--sp-3); gap: var(--sp-2); }
   .action span, .actionDanger span { display: none; }
 }
+
+.metaPanel {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(var(--sp-6) + 56px); z-index: 60;
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: var(--sp-4); box-shadow: var(--shadow-lg, 0 12px 40px rgba(0,0,0,.4));
+  width: min(680px, 92vw); display: flex; flex-direction: column; gap: var(--sp-3);
+}
+.metaHint { color: var(--text-muted); font-size: var(--fs-xs); }
+.metaGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--sp-2); }
+.metaGrid input {
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: var(--sp-2) var(--sp-3); color: var(--text); font-size: var(--fs-sm);
+}
+.metaApply {
+  align-self: flex-end; background: var(--accent); color: #fff;
+  border-radius: var(--r-md); padding: var(--sp-2) var(--sp-4); font-size: var(--fs-sm);
+}
+.metaApply:disabled { opacity: 0.5; }
