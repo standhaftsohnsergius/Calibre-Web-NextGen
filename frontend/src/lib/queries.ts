@@ -326,6 +326,37 @@ export function useUpdateAdminConfig() {
   });
 }
 
+export interface MailConfig {
+  mail_server: string;
+  mail_port: number;
+  mail_use_ssl: number;
+  mail_login: string;
+  mail_from: string;
+  mail_size_mb: number;
+  mail_server_type: number;
+  has_password: boolean;
+}
+
+export function useMailConfig() {
+  return useQuery<MailConfig>({
+    queryKey: ['admin-mail'],
+    queryFn: () => apiGet<MailConfig>('/api/v1/admin/mailsettings'),
+  });
+}
+
+export function useUpdateMailConfig() {
+  const qc = useQueryClient();
+  return useMutation({
+    // mail_password is write-only; omit it to keep the existing one.
+    mutationFn: (vars: Partial<MailConfig> & { mail_password?: string }) =>
+      apiPost<MailConfig>('/api/v1/admin/mailsettings', vars),
+    onSuccess: (data) => {
+      qc.setQueryData(['admin-mail'], data);
+      void qc.invalidateQueries({ queryKey: ['me'] });
+    },
+  });
+}
+
 export function useUpdateAdminUser() {
   const qc = useQueryClient();
   return useMutation({

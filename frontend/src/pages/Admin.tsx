@@ -3,7 +3,7 @@ import { Shield, Trash2, Mail, UserPlus, ExternalLink, Settings, Database, Serve
 import { useEffect } from 'react';
 import {
   useAdminUsers, useUpdateAdminUser, useDeleteAdminUser, useCreateAdminUser, useMe,
-  useAdminConfig, useUpdateAdminConfig,
+  useAdminConfig, useUpdateAdminConfig, useMailConfig, useUpdateMailConfig,
 } from '../lib/queries';
 import { SpinnerCentered } from '../components/Spinner';
 import { EmptyState } from '../components/EmptyState';
@@ -20,7 +20,6 @@ const SERVER_SETTINGS: { href: string; label: string; icon: typeof Settings }[] 
   { href: '/admin/config', label: 'Basic configuration', icon: Settings },
   { href: '/admin/viewconfig', label: 'UI / display configuration', icon: Sliders },
   { href: '/admin/dbconfig', label: 'Database & library path', icon: Database },
-  { href: '/admin/mailsettings', label: 'Email (SMTP) server', icon: Mail },
   { href: '/admin/scheduledtasks', label: 'Scheduled tasks', icon: Clock },
   { href: '/cwa-settings', label: 'CWA settings (ingest/convert)', icon: Server },
   { href: '/cwa-stats-show', label: 'Statistics dashboard', icon: BarChart3 },
@@ -202,6 +201,7 @@ export function Admin() {
       </div>
 
       <AdminConfigForm />
+      <MailConfigForm />
 
       <div className={styles.settingsHead}>
         <Settings size={18} className={styles.headerIcon} />
@@ -318,6 +318,84 @@ function AdminConfigForm() {
       <div className={styles.newActions}>
         <button type="submit" className={styles.submitBtn} disabled={update.isPending}>
           {update.isPending ? t('Saving…') : t('Save settings')}
+        </button>
+        {msg && <span className={msg.ok ? styles.msgOk : styles.msgErr}>{msg.text}</span>}
+      </div>
+    </form>
+  );
+}
+
+/** Native SMTP / email server settings. Password is write-only: blank = keep
+ *  the existing one. (Security-review gated before merge — writes a secret.) */
+function MailConfigForm() {
+  const t = useT();
+  const { data: cfg } = useMailConfig();
+  const update = useUpdateMailConfig();
+  const [form, setForm] = useState<Record<string, string | number>>({});
+  const [pw, setPw] = useState('');
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  useEffect(() => {
+    if (!cfg) return;
+    setForm({
+      mail_server: cfg.mail_server, mail_port: cfg.mail_port, mail_use_ssl: cfg.mail_use_ssl,
+      mail_login: cfg.mail_login, mail_from: cfg.mail_from, mail_size_mb: cfg.mail_size_mb,
+    });
+  }, [cfg]);
+
+  if (!cfg) return null;
+  const set = (k: string, v: string | number) => setForm((f) => ({ ...f, [k]: v }));
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setMsg(null);
+    update.mutate({ ...form, ...(pw ? { mail_password: pw } : {}) }, {
+      onSuccess: () => { setMsg({ ok: true, text: t('Email settings saved.') }); setPw(''); },
+      onError: (err: unknown) => setMsg({ ok: false, text: err instanceof ApiError ? err.message : t('Could not save.') }),
+    });
+  };
+
+  return (
+    <form className={styles.newForm} onSubmit={onSubmit}>
+      <div className={styles.settingsHead} style={{ marginTop: 0 }}>
+        <Mail size={18} className={styles.headerIcon} />
+        <h2 className={styles.settingsTitle}>{t('Email (SMTP) server')}</h2>
+      </div>
+      <div className={styles.newRow}>
+        <label className={styles.field}>
+          <span>{t('SMTP server')}</span>
+          <input value={String(form.mail_server ?? '')} onChange={(e) => set('mail_server', e.target.value)} />
+        </label>
+        <label className={styles.field}>
+          <span>{t('Port')}</span>
+          <input type="number" value={String(form.mail_port ?? '')} onChange={(e) => set('mail_port', e.target.value)} />
+        </label>
+        <label className={styles.field}>
+          <span>{t('Encryption')}</span>
+          <select value={String(form.mail_use_ssl ?? 0)} onChange={(e) => set('mail_use_ssl', e.target.value)}>
+            <option value="0">{t('None')}</option>
+            <option value="1">{t('STARTTLS')}</option>
+            <option value="2">{t('SSL/TLS')}</option>
+          </select>
+        </label>
+      </div>
+      <div className={styles.newRow}>
+        <label className={styles.field}>
+          <span>{t('Login')}</span>
+          <input value={String(form.mail_login ?? '')} onChange={(e) => set('mail_login', e.target.value)} />
+        </label>
+        <label className={styles.field}>
+          <span>{cfg.has_password ? t('Password (leave blank to keep)') : t('Password')}</span>
+          <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="new-password" />
+        </label>
+        <label className={styles.field}>
+          <span>{t('From address')}</span>
+          <input value={String(form.mail_from ?? '')} onChange={(e) => set('mail_from', e.target.value)} />
+        </label>
+      </div>
+      <div className={styles.newActions}>
+        <button type="submit" className={styles.submitBtn} disabled={update.isPending}>
+          {update.isPending ? t('Saving…') : t('Save email settings')}
         </button>
         {msg && <span className={msg.ok ? styles.msgOk : styles.msgErr}>{msg.text}</span>}
       </div>

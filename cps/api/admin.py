@@ -109,6 +109,65 @@ def _ui_config_payload():
     }
 
 
+def _mail_payload():
+    """Mail settings for the SPA form. The password is WRITE-ONLY — never
+    returned; only whether one is set."""
+    return {
+        "mail_server": config.mail_server or "",
+        "mail_port": config.mail_port,
+        "mail_use_ssl": config.mail_use_ssl,
+        "mail_login": config.mail_login or "",
+        "mail_from": config.mail_from or "",
+        "mail_size_mb": int((config.mail_size or 0) / 1024 / 1024),
+        "mail_server_type": config.mail_server_type,
+        "has_password": bool(getattr(config, "mail_password_e", None)),
+    }
+
+
+@api_v1.route("/admin/mailsettings")
+@login_required_if_no_ano
+def admin_get_mail():
+    """Read SMTP settings (admin only). SECURITY: never returns the password."""
+    guard = _require_admin()
+    if guard:
+        return guard
+    return jsonify(_mail_payload())
+
+
+@api_v1.route("/admin/mailsettings", methods=["POST"])
+@login_required_if_no_ano
+def admin_update_mail():
+    """Update SMTP settings (admin only). The password is write-only — set only
+    when a non-empty value is supplied. SECURITY-REVIEW: writes a secret; run
+    /security-review before merging this branch (CLAUDE.md hard-rule 3c)."""
+    guard = _require_admin()
+    if guard:
+        return guard
+    data = request.get_json(silent=True) or {}
+    for key in ("mail_server", "mail_from", "mail_login"):
+        if key in data:
+            setattr(config, key, str(data[key] or "").strip())
+    for key in ("mail_port", "mail_use_ssl", "mail_server_type"):
+        if key in data:
+            try:
+                setattr(config, key, int(data[key]))
+            except (TypeError, ValueError):
+                return _err("invalid_request", "%s must be a number" % key, 400)
+    if "mail_size_mb" in data:
+        try:
+            config.mail_size = int(data["mail_size_mb"]) * 1024 * 1024
+        except (TypeError, ValueError):
+            return _err("invalid_request", "mail_size_mb must be a number", 400)
+    # Write-only password: only overwrite when the admin actually typed a new one.
+    if data.get("mail_password"):
+        config.mail_password_e = str(data["mail_password"])
+    try:
+        config.save()
+    except Exception as ex:
+        return _err("db_error", "Could not save mail settings: %s" % ex, 500)
+    return jsonify(_mail_payload())
+
+
 @api_v1.route("/admin/config")
 @login_required_if_no_ano
 def admin_get_config():
