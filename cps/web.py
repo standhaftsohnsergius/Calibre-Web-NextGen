@@ -135,12 +135,17 @@ def add_security_headers(resp):
     if request.endpoint == "admin.hardcover_review_matches":
         csp += " https:"
     csp += " data:"
-    if request.endpoint in ("edit-book.show_edit_book", "cover_picker.cover_picker_page") or config.config_use_google_drive:
+    if (request.endpoint in ("edit-book.show_edit_book", "cover_picker.cover_picker_page",
+                             "spa.spa_shell")
+            or config.config_use_google_drive):
         # The metadata-search modal (edit-book) and the focused cover-picker
         # page both render thumbnails directly from external provider CDNs
         # (Hardcover, Apple Books, Amazon image CDN, OpenLibrary, Kobo,
-        # Douban, etc.). Allow those img-src origins for these two endpoints
-        # only — all other pages keep the strict same-origin policy.
+        # Douban, etc.). Allow those img-src origins for these endpoints.
+        # The SPA (spa.spa_shell) serves ONE shell for every /app route incl.
+        # its edit page, so the allowance can't be path-scoped within it; we
+        # accept img-src '*' SPA-wide (images are non-executable — this only
+        # widens where covers can load from, not the script/XSS surface).
         csp += " *"
     if reader_like:
         csp += " blob: ; style-src-elem 'self' blob: 'unsafe-inline'"

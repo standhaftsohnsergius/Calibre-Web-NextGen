@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
-import { ChevronLeft, Save, Trash2, RefreshCw, Image as ImageIcon, Upload as UploadIcon, ExternalLink } from 'lucide-react';
+import { ChevronLeft, Save, Trash2, RefreshCw, Image as ImageIcon, Upload as UploadIcon, ExternalLink, Sparkles, Search } from 'lucide-react';
 import {
-  useBookMetadata, useUpdateMetadata, useBook, useMe, useDeleteFormat, useConvertFormat, useSetCover,
+  useBookMetadata, useUpdateMetadata, useBook, useMe, useDeleteFormat, useConvertFormat,
+  useSetCover, useMetadataSearch,
 } from '../lib/queries';
 import { Button } from '../components/Button';
-import { SpinnerCentered } from '../components/Spinner';
+import { Spinner, SpinnerCentered } from '../components/Spinner';
 import { EmptyState } from '../components/EmptyState';
-import type { MetadataUpdate } from '../lib/api';
+import type { MetadataUpdate, MetaResult } from '../lib/api';
 import { ApiError } from '../lib/api';
 import styles from './EditBook.module.css';
 
@@ -63,6 +64,20 @@ export function EditBook({ id }: { id: string }) {
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((f) => (f ? { ...f, [key]: value } : f));
 
+  // Apply an online metadata result into the form (one merged update).
+  const applyResult = (r: MetaResult) =>
+    setForm((f) => (f ? {
+      ...f,
+      title: r.title || f.title,
+      authors: r.authors?.length ? r.authors.join(' & ') : f.authors,
+      tags: r.tags?.length ? r.tags.join(', ') : f.tags,
+      publishers: r.publisher || f.publishers,
+      comments: r.description || f.comments,
+      series: r.series || f.series,
+      series_index: r.series_index ? String(r.series_index) : f.series_index,
+      rating: r.rating ? String(Math.round(r.rating)) : f.rating,
+    } : f));
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setBanner(null);
@@ -101,6 +116,8 @@ export function EditBook({ id }: { id: string }) {
       <h1 className={styles.title}>Edit metadata</h1>
 
       <CoverManager id={id} />
+
+      <MetadataFetch defaultQuery={form.title} onApply={applyResult} />
 
       <form className={styles.form} onSubmit={onSubmit}>
         <Field label="Title" error={fieldErrors.title}>
@@ -155,6 +172,63 @@ export function EditBook({ id }: { id: string }) {
 
       <FormatsManager id={id} />
     </main>
+  );
+}
+
+/** Fetch metadata from online providers (Google Books, OpenLibrary, Amazon,
+ *  ComicVine, …) and apply a result to the form. Reuses the legacy
+ *  /metadata/search endpoint (per-user provider toggles live there). */
+function MetadataFetch({ defaultQuery, onApply }: { defaultQuery: string; onApply: (r: MetaResult) => void }) {
+  const search = useMetadataSearch();
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState(defaultQuery);
+  const [results, setResults] = useState<MetaResult[]>([]);
+  const [err, setErr] = useState<string | null>(null);
+
+  const run = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErr(null);
+    search.mutate(query.trim(), {
+      onSuccess: (r) => setResults(r.results),
+      onError: (e2) => setErr(e2 instanceof ApiError ? e2.message : 'Search failed.'),
+    });
+  };
+
+  return (
+    <section className={styles.metaFetch}>
+      {!open ? (
+        <Button type="button" variant="ghost" onClick={() => { setOpen(true); setQuery(defaultQuery); }}>
+          <Sparkles size={15} /> Fetch metadata from web
+        </Button>
+      ) : (
+        <div className={styles.metaPanel}>
+          <form className={styles.metaSearchRow} onSubmit={run}>
+            <input className={styles.input} value={query} onChange={(e) => setQuery(e.target.value)}
+              placeholder="Title, author, or ISBN" autoFocus />
+            <Button type="submit" disabled={search.isPending || !query.trim()}>
+              {search.isPending ? <Spinner size={15} /> : <Search size={15} />} Search
+            </Button>
+            <button type="button" className={styles.cancel} onClick={() => setOpen(false)}>Close</button>
+          </form>
+          {err && <span className={styles.msgErr}>{err}</span>}
+          {results.length > 0 && (
+            <ul className={styles.metaResults}>
+              {results.map((r, i) => (
+                <li key={i} className={styles.metaResult}>
+                  {r.cover && <img src={r.cover} alt="" className={styles.metaCover} loading="lazy" />}
+                  <div className={styles.metaInfo}>
+                    <span className={styles.metaTitle}>{r.title}</span>
+                    <span className={styles.metaAuthors}>{(r.authors || []).join(', ')}</span>
+                    {r.source?.id && <span className={styles.metaSource}>{r.source.id}</span>}
+                  </div>
+                  <Button type="button" variant="ghost" onClick={() => onApply(r)}>Use</Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </section>
   );
 }
 

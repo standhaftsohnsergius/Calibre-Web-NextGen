@@ -143,3 +143,21 @@
 .coverUrlRow { display: flex; gap: var(--sp-2); }
 .coverAdvanced { display: inline-flex; align-items: center; gap: var(--sp-1); color: var(--text-muted); font-size: var(--fs-sm); }
 .coverAdvanced:hover { color: var(--accent); }
+
+.metaFetch { margin-bottom: var(--sp-5); }
+.metaPanel {
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-3);
+}
+.metaSearchRow { display: flex; gap: var(--sp-2); align-items: center; }
+.metaSearchRow .input { flex: 1; }
+.metaResults { list-style: none; display: flex; flex-direction: column; gap: var(--sp-2); max-height: 420px; overflow-y: auto; }
+.metaResult {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-2); border: 1px solid var(--border); border-radius: var(--r-md);
+}
+.metaCover { width: 40px; height: 60px; object-fit: cover; border-radius: var(--r-sm); flex-shrink: 0; }
+.metaInfo { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.metaTitle { color: var(--text); font-size: var(--fs-sm); font-weight: 600; }
+.metaAuthors { color: var(--text-muted); font-size: var(--fs-xs); }
+.metaSource { color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase; opacity: 0.7; }

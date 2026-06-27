@@ -314,6 +314,59 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+/** Form-encoded POST (application/x-www-form-urlencoded). Used to consume the
+ *  legacy form endpoints (e.g. /metadata/search) directly, reusing their logic
+ *  rather than duplicating it under /api/v1. Same CSRF-retry as apiPost. */
+export async function apiPostForm<T>(path: string, fields: Record<string, string>): Promise<T> {
+  const doPost = async (csrf: string): Promise<Response> =>
+    fetch(path, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf },
+      body: new URLSearchParams(fields).toString(),
+    });
+
+  let csrf = await getCsrf();
+  let res = await doPost(csrf);
+  const isJson400 = res.status === 400
+    && (res.headers.get('content-type') || '').includes('application/json');
+  if (res.status === 400 && !isJson400) {
+    clearCsrf();
+    csrf = await getCsrf();
+    res = await doPost(csrf);
+  }
+  if (!res.ok) {
+    let msg = res.statusText;
+    try {
+      const d = await res.json() as { error?: string | { message?: string } };
+      if (typeof d.error === 'string') msg = d.error;
+      else if (d.error?.message) msg = d.error.message;
+    } catch { /* keep statusText */ }
+    throw new ApiError(res.status, msg);
+  }
+  return res.json() as Promise<T>;
+}
+
+export interface MetaResult {
+  title: string;
+  authors: string[];
+  cover: string;
+  description?: string;
+  series?: string | null;
+  series_index?: number | null;
+  publisher?: string | null;
+  publishedDate?: string | null;
+  rating?: number | null;
+  tags?: string[];
+  identifiers?: Record<string, string | number>;
+  source?: { id?: string; description?: string };
+}
+
+export interface MetaSearchResponse {
+  results: MetaResult[];
+  providers: { id: string; name: string; status: string; count: number; message: string }[];
+}
+
 /** Multipart POST (file upload). Mirrors apiPost's CSRF handling, but lets the
  *  browser set the multipart Content-Type + boundary (so we must NOT set it). */
 export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {

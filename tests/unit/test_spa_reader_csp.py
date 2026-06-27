@@ -33,3 +33,13 @@ def test_reader_csp_allows_blob_img_and_style():
     assert "if reader_like:\n        csp += \" blob: ; style-src-elem 'self' blob: 'unsafe-inline'\"" in block
     # the font/default blob: allowance is also extended to reader_like
     assert block.count("if reader_like:") >= 2
+
+
+@pytest.mark.unit
+def test_spa_shell_allows_external_cover_images():
+    # The SPA edit page's metadata-search modal + cover picker render thumbnails
+    # from external provider CDNs. spa.spa_shell must be in the img-src '*'
+    # allowance alongside the legacy edit-book / cover-picker endpoints.
+    block = WEB_PY.split("def add_security_headers", 1)[1].split("\ndef ", 1)[0]
+    assert '"spa.spa_shell"' in block
+    assert 'cover_picker.cover_picker_page' in block

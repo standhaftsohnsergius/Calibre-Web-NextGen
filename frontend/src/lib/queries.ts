@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPost, apiUpload, ApiError } from './api';
+import { apiGet, apiPost, apiUpload, apiPostForm, ApiError } from './api';
+import type { MetaSearchResponse } from './api';
 import type {
   Me, BooksPage, BookDetail, EntityList, Shelf, ShelfDetail,
   SearchOptions, AdvancedSearchParams, AdvSearchResult, Account, ProfileUpdate,
@@ -401,6 +402,13 @@ export function useConvertFormat(id: string | number) {
   return useMutation({
     mutationFn: (v: { from: string; to: string }) =>
       apiPost<{ ok: boolean; message: string }>(`/api/v1/books/${id}/convert`, v),
+  });
+}
+
+/** Search online metadata providers (reuses the legacy /metadata/search). */
+export function useMetadataSearch() {
+  return useMutation({
+    mutationFn: (query: string) => apiPostForm<MetaSearchResponse>('/metadata/search', { query }),
   });
 }
 
