@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'wouter';
 import {
   Library, Users, Layers, Tag, Building2, Languages, BookCopy, UploadCloud, Shield,
-  Flame, Shuffle, Star, Archive, Info, ListChecks,
+  Flame, Shuffle, Star, Archive, Info, ListChecks, Table2, Wand2, Files, ExternalLink,
 } from 'lucide-react';
 import { useShelves, useMe } from '../lib/queries';
 import { useT } from '../lib/i18n';
@@ -154,6 +154,34 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
               </li>
             );
           })}
+        </ul>
+
+        {/* Power features served by the legacy UI under the hybrid cutover —
+            plain <a> so they leave the SPA. Reachable, not omitted. */}
+        <ul className={styles.list}>
+          <li>
+            <a href="/table" className={styles.item}>
+              <Table2 size={18} className={styles.icon} />
+              <span>{t('Table view')}</span>
+              <ExternalLink size={12} className={styles.icon} style={{ marginLeft: 'auto', opacity: 0.5 }} />
+            </a>
+          </li>
+          <li>
+            <a href="/magicshelf" className={styles.item}>
+              <Wand2 size={18} className={styles.icon} />
+              <span>{t('Smart shelves')}</span>
+              <ExternalLink size={12} className={styles.icon} style={{ marginLeft: 'auto', opacity: 0.5 }} />
+            </a>
+          </li>
+          {(canUpload || isAdmin) && (
+            <li>
+              <a href="/duplicates" className={styles.item}>
+                <Files size={18} className={styles.icon} />
+                <span>{t('Duplicates')}</span>
+                <ExternalLink size={12} className={styles.icon} style={{ marginLeft: 'auto', opacity: 0.5 }} />
+              </a>
+            </li>
+          )}
         </ul>
 
         {shelves.length > 0 && (

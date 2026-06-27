@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Shield, Trash2, Mail, UserPlus } from 'lucide-react';
+import { Shield, Trash2, Mail, UserPlus, ExternalLink, Settings, Database, Server, Clock, FileText, Sliders, BarChart3, Files } from 'lucide-react';
 import {
   useAdminUsers, useUpdateAdminUser, useDeleteAdminUser, useCreateAdminUser, useMe,
 } from '../lib/queries';
@@ -8,6 +8,22 @@ import { EmptyState } from '../components/EmptyState';
 import type { AdminUser } from '../lib/api';
 import { ApiError } from '../lib/api';
 import styles from './Admin.module.css';
+
+// Server-configuration pages. Under the hybrid cutover these open the proven
+// legacy admin UI (rarely-touched set-once config) rather than being rebuilt in
+// React — no capability is dropped; an admin occasionally lands on a Jinja page.
+const SERVER_SETTINGS: { href: string; label: string; icon: typeof Settings }[] = [
+  { href: '/admin/view', label: 'Full user table & restrictions', icon: Shield },
+  { href: '/admin/config', label: 'Basic configuration', icon: Settings },
+  { href: '/admin/viewconfig', label: 'UI / display configuration', icon: Sliders },
+  { href: '/admin/dbconfig', label: 'Database & library path', icon: Database },
+  { href: '/admin/mailsettings', label: 'Email (SMTP) server', icon: Mail },
+  { href: '/admin/scheduledtasks', label: 'Scheduled tasks', icon: Clock },
+  { href: '/cwa-settings', label: 'CWA settings (ingest/convert)', icon: Server },
+  { href: '/cwa-stats-show', label: 'Statistics dashboard', icon: BarChart3 },
+  { href: '/admin/logfile', label: 'Logs', icon: FileText },
+  { href: '/duplicates', label: 'Duplicate books', icon: Files },
+];
 
 // Order + labels for the role toggles shown per user.
 const ROLE_FIELDS: { key: string; label: string }[] = [
@@ -179,6 +195,23 @@ export function Admin() {
             </section>
           );
         })}
+      </div>
+
+      <div className={styles.settingsHead}>
+        <Settings size={18} className={styles.headerIcon} />
+        <h2 className={styles.settingsTitle}>Server configuration</h2>
+      </div>
+      <p className={styles.settingsHint}>
+        These open the full configuration pages. Changes there apply to the whole server.
+      </p>
+      <div className={styles.settingsGrid}>
+        {SERVER_SETTINGS.map(({ href, label, icon: Icon }) => (
+          <a key={href} href={href} className={styles.settingsCard}>
+            <Icon size={18} className={styles.settingsIcon} />
+            <span className={styles.settingsLabel}>{label}</span>
+            <ExternalLink size={13} className={styles.settingsExt} />
+          </a>
+        ))}
       </div>
     </main>
   );

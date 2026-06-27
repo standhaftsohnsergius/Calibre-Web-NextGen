@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'wouter';
-import { Download, Pencil, Star, Archive, EyeOff, Eye, Send } from 'lucide-react';
+import { Download, Pencil, Star, Archive, EyeOff, Eye, Send, Highlighter } from 'lucide-react';
 import {
   useBook, useToggleRead, useToggleFavorite, useToggleArchived, useToggleHidden,
   useSendToEreader, useMe,
@@ -260,6 +260,14 @@ export function BookDetail() {
                 Edit
               </Link>
             )}
+
+            {/* Highlights/annotations — view + export + import (Kobo). Opens the
+                server annotations page; in-reader highlight creation is the
+                flagship reader phase-2 (tracked separately). */}
+            <a href={`/annotations/${book.id}`} className={styles.downloadBtn}>
+              <Highlighter size={14} />
+              Highlights
+            </a>
           </div>
 
           {/* Send-to-e-reader panel */}
