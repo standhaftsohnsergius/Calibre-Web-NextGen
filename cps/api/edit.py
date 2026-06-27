@@ -18,8 +18,10 @@ from .serializers import serialize_book_detail
 from .. import calibre_db, config, db, ub, isoLanguages
 from ..cw_login import current_user
 from ..usermanagement import login_required_if_no_ano
+import time
+
 from ..editbooks import edit_book_param, delete_book_from_table
-from ..helper import convert_book_format
+from ..helper import convert_book_format, save_cover, save_cover_from_url
 
 # Fields the SPA edit form can change, applied in this order. Title/authors come
 # first because they may restructure the book's directory; the rest follow.
@@ -176,3 +178,32 @@ def convert_format(book_id):
     if rtn is None:
         return jsonify({"ok": True, "message": "Queued for conversion to %s" % dst})
     return _err("convert_failed", "There was an error converting this book: %s" % rtn, 400)
+
+
+@api_v1.route("/books/<int:book_id>/cover", methods=["POST"])
+@login_required_if_no_ano
+def set_cover(book_id):
+    """Replace a book's cover from an uploaded image (multipart `file`) or a
+    remote URL (JSON {url}). Reuses helper.save_cover / save_cover_from_url so the
+    size/format checks match the legacy edit page. The dedicated cover *picker*
+    (provider candidate grid, e-reader padding preview) stays at /book/<id>/cover."""
+    guard = _require_edit()
+    if guard:
+        return guard
+    book = calibre_db.get_filtered_book(book_id)
+    if not book:
+        return _err("not_found", "Book not found", 404)
+
+    if request.files.get("file"):
+        ok, message = save_cover(request.files["file"], book.path)
+    else:
+        data = request.get_json(silent=True) or {}
+        url = (data.get("url") or "").strip()
+        if not url:
+            return _err("invalid_request", "Provide an image file or a cover URL", 400)
+        ok, message = save_cover_from_url(url, book.path)
+
+    if ok:
+        # Cache-bust so the browser refetches the replaced image immediately.
+        return jsonify({"ok": True, "cover_url": "/cover/%d/og?t=%d" % (book_id, int(time.time()))})
+    return _err("cover_failed", str(message), 400)

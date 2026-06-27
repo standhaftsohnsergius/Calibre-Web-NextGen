@@ -207,3 +207,38 @@ def test_delete_format_uses_core_with_uppercased_format():
             resp = inspect.unwrap(mod.delete_format)(5, "epub")
     assert resp[1] == 204
     core.assert_called_once_with(5, "EPUB", True)
+
+
+# ── cover (#27) ──────────────────────────────────────────────────────────────
+
+@pytest.mark.unit
+def test_set_cover_requires_edit_role():
+    from cps.api import edit as mod
+    with _ctx("/api/v1/books/5/cover", body={"url": "http://x/y.jpg"}):
+        with patch.object(mod, "current_user", _editor(role_edit=False)):
+            resp = inspect.unwrap(mod.set_cover)(5)
+    assert resp[1] == 403
+
+
+@pytest.mark.unit
+def test_set_cover_no_input_400():
+    from cps.api import edit as mod
+    with _ctx("/api/v1/books/5/cover", body={}):
+        with patch.object(mod, "current_user", _editor()), \
+             patch.object(mod.calibre_db, "get_filtered_book", return_value=SimpleNamespace(path="p")):
+            resp = inspect.unwrap(mod.set_cover)(5)
+    assert resp[1] == 400
+
+
+@pytest.mark.unit
+def test_set_cover_from_url_calls_core_and_returns_cover_url():
+    from cps.api import edit as mod
+    with _ctx("/api/v1/books/5/cover", body={"url": "http://x/y.jpg"}):
+        with patch.object(mod, "current_user", _editor()), \
+             patch.object(mod.calibre_db, "get_filtered_book", return_value=SimpleNamespace(path="p")), \
+             patch.object(mod, "save_cover_from_url", return_value=(True, "ok")) as core:
+            resp = inspect.unwrap(mod.set_cover)(5)
+    body = json.loads(resp.get_data())
+    assert body["ok"] is True
+    assert body["cover_url"].startswith("/cover/5/og")
+    core.assert_called_once_with("http://x/y.jpg", "p")

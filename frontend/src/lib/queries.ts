@@ -404,6 +404,25 @@ export function useConvertFormat(id: string | number) {
   });
 }
 
+/** Replace the cover from an uploaded file or a remote URL. */
+export function useSetCover(id: string | number) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (v: { file?: File; url?: string }) => {
+      if (v.file) {
+        const fd = new FormData();
+        fd.append('file', v.file);
+        return apiUpload<{ ok: boolean; cover_url: string }>(`/api/v1/books/${id}/cover`, fd);
+      }
+      return apiPost<{ ok: boolean; cover_url: string }>(`/api/v1/books/${id}/cover`, { url: v.url });
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['book', String(id)] });
+      void qc.invalidateQueries({ queryKey: ['books'] });
+    },
+  });
+}
+
 // ── Reader (bookmark / progress) ─────────────────────────────────────────────
 
 export function useBookmark(bookId: string | number, format = 'epub') {

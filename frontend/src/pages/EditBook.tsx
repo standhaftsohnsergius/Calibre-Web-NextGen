@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
-import { ChevronLeft, Save, Trash2, RefreshCw } from 'lucide-react';
+import { ChevronLeft, Save, Trash2, RefreshCw, Image as ImageIcon, Upload as UploadIcon, ExternalLink } from 'lucide-react';
 import {
-  useBookMetadata, useUpdateMetadata, useBook, useMe, useDeleteFormat, useConvertFormat,
+  useBookMetadata, useUpdateMetadata, useBook, useMe, useDeleteFormat, useConvertFormat, useSetCover,
 } from '../lib/queries';
 import { Button } from '../components/Button';
 import { SpinnerCentered } from '../components/Spinner';
@@ -100,6 +100,8 @@ export function EditBook({ id }: { id: string }) {
       </Link>
       <h1 className={styles.title}>Edit metadata</h1>
 
+      <CoverManager id={id} />
+
       <form className={styles.form} onSubmit={onSubmit}>
         <Field label="Title" error={fieldErrors.title}>
           <input className={styles.input} value={form.title} onChange={(e) => set('title', e.target.value)} />
@@ -153,6 +155,61 @@ export function EditBook({ id }: { id: string }) {
 
       <FormatsManager id={id} />
     </main>
+  );
+}
+
+/** Replace the book cover: upload a file or paste a URL. The full provider
+ *  candidate grid + e-reader padding preview lives at the legacy /book/:id/cover. */
+function CoverManager({ id }: { id: string }) {
+  const { data: book } = useBook(id);
+  const setCover = useSetCover(id);
+  const [url, setUrl] = useState('');
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setMsg(null);
+    setCover.mutate({ file }, {
+      onSuccess: () => setMsg({ ok: true, text: 'Cover updated.' }),
+      onError: (err) => setMsg({ ok: false, text: err instanceof ApiError ? err.message : 'Upload failed.' }),
+    });
+  };
+
+  const onUrl = () => {
+    if (!url.trim()) return;
+    setMsg(null);
+    setCover.mutate({ url: url.trim() }, {
+      onSuccess: () => { setMsg({ ok: true, text: 'Cover updated.' }); setUrl(''); },
+      onError: (err) => setMsg({ ok: false, text: err instanceof ApiError ? err.message : 'Could not fetch cover.' }),
+    });
+  };
+
+  return (
+    <section className={styles.coverSection}>
+      <div className={styles.coverPreview}>
+        {book?.cover_url
+          ? <img src={book.cover_url} alt="Current cover" className={styles.coverImg} />
+          : <div className={styles.coverPlaceholder}><ImageIcon size={28} /></div>}
+      </div>
+      <div className={styles.coverControls}>
+        <label className={styles.coverUploadBtn}>
+          <UploadIcon size={15} /> Upload image
+          <input type="file" accept="image/*" hidden onChange={onFile} disabled={setCover.isPending} />
+        </label>
+        <div className={styles.coverUrlRow}>
+          <input className={styles.input} value={url} onChange={(e) => setUrl(e.target.value)}
+            placeholder="…or paste an image URL" />
+          <Button type="button" variant="ghost" onClick={onUrl} disabled={setCover.isPending || !url.trim()}>
+            Fetch
+          </Button>
+        </div>
+        <a className={styles.coverAdvanced} href={`/book/${id}/cover?origin=edit`}>
+          <ExternalLink size={13} /> More cover options (search providers, e-reader preview)
+        </a>
+        {msg && <span className={msg.ok ? styles.msgOk : styles.msgErr}>{msg.text}</span>}
+      </div>
+    </section>
   );
 }
 

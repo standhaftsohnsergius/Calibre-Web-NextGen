@@ -125,3 +125,21 @@
 .formatDelete { color: var(--text-muted); padding: var(--sp-1); }
 .formatDelete:hover:not(:disabled) { color: var(--danger); }
 .convertForm { display: flex; align-items: flex-end; gap: var(--sp-3); flex-wrap: wrap; }
+
+.coverSection { display: flex; gap: var(--sp-4); margin-bottom: var(--sp-5); align-items: flex-start; }
+.coverPreview { flex-shrink: 0; }
+.coverImg { width: 120px; height: auto; border-radius: var(--r-md); border: 1px solid var(--border); }
+.coverPlaceholder {
+  width: 120px; height: 170px; display: flex; align-items: center; justify-content: center;
+  background: var(--surface-1); border: 1px dashed var(--border); border-radius: var(--r-md); color: var(--text-muted);
+}
+.coverControls { display: flex; flex-direction: column; gap: var(--sp-2); flex: 1; }
+.coverUploadBtn {
+  display: inline-flex; align-items: center; gap: var(--sp-2); cursor: pointer;
+  font-size: var(--fs-sm); color: var(--accent);
+  border: 1px solid var(--border); border-radius: var(--r-md); padding: var(--sp-2) var(--sp-3);
+  width: fit-content;
+}
+.coverUrlRow { display: flex; gap: var(--sp-2); }
+.coverAdvanced { display: inline-flex; align-items: center; gap: var(--sp-1); color: var(--text-muted); font-size: var(--fs-sm); }
+.coverAdvanced:hover { color: var(--accent); }
