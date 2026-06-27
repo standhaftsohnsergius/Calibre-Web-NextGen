@@ -32,10 +32,19 @@ function formatPubdate(pubdate: string): string {
   return pubdate;
 }
 
-function readableFormat(fmt: BookFormat): string | null {
+// Formats the in-browser reader can open. EPUB/KEPUB use the SPA's epub.js
+// reader; the rest (PDF, comics, plain text, DjVu, audiobooks) open in the
+// server's format-specific reader at read_url — so every readable format the
+// library supports is reachable from the SPA, not just EPUB.
+const SPA_READABLE = new Set(['epub', 'kepub']);
+const LEGACY_READABLE = new Set([
+  'pdf', 'txt', 'djvu', 'cbz', 'cbr', 'cbt', 'cb7',
+  'mp3', 'm4a', 'm4b', 'flac', 'ogg', 'opus', 'wav',
+]);
+
+function isReadable(fmt: BookFormat): boolean {
   const f = fmt.format.toLowerCase();
-  if (f === 'epub' || f === 'pdf') return f;
-  return null;
+  return SPA_READABLE.has(f) || LEGACY_READABLE.has(f);
 }
 
 interface SendPanelProps {
@@ -110,9 +119,10 @@ export function BookDetail() {
     );
   }
 
-  const readableFormats = book.formats.filter((f) => readableFormat(f) !== null);
-  const primaryReadable = readableFormats[0] ?? null;
-  const hasEpub = book.formats.some((f) => f.format.toLowerCase() === 'epub');
+  const readableFormats = book.formats.filter(isReadable);
+  // Prefer EPUB (SPA reader); else the first server-readable format.
+  const hasEpub = book.formats.some((f) => SPA_READABLE.has(f.format.toLowerCase()));
+  const primaryReadable = readableFormats.find((f) => LEGACY_READABLE.has(f.format.toLowerCase())) ?? null;
 
   return (
     <main className={styles.container}>
