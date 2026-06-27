@@ -16,6 +16,7 @@ import { About } from './pages/About';
 import { Tasks } from './pages/Tasks';
 import { Table } from './pages/Table';
 import { Duplicates } from './pages/Duplicates';
+import { Annotations } from './pages/Annotations';
 import { AppShell } from './components/AppShell';
 import { SpinnerCentered } from './components/Spinner';
 import { I18nProvider } from './lib/i18n';
@@ -54,6 +55,7 @@ export function App() {
           <AppShell userName={me.name} onLogout={() => logout.mutate()}>
             <Switch>
           <Route path="/book/:id/edit">{(p) => <EditBook id={p.id} />}</Route>
+          <Route path="/book/:id/annotations">{(p) => <Annotations id={p.id} />}</Route>
           <Route path="/book/:id" component={BookDetail} />
 
           {/* Browse: entity lists + per-entity filtered catalog */}

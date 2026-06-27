@@ -267,10 +267,10 @@ export function BookDetail() {
             {/* Highlights/annotations — view + export + import (Kobo). Opens the
                 server annotations page; in-reader highlight creation is the
                 flagship reader phase-2 (tracked separately). */}
-            <a href={`/annotations/${book.id}`} className={styles.downloadBtn}>
+            <Link href={`/book/${book.id}/annotations`} className={styles.downloadBtn}>
               <Highlighter size={14} />
               {t('Highlights')}
-            </a>
+            </Link>
           </div>
 
           {/* Send-to-e-reader panel */}
