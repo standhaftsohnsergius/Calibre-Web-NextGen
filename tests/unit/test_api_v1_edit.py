@@ -21,7 +21,7 @@ def _ctx(path, method="POST", body=None):
 
 
 def _editor(role_edit=True, anon=False, role_delete=True):
-    return SimpleNamespace(is_authenticated=True, is_anonymous=anon,
+    return SimpleNamespace(is_authenticated=True, is_anonymous=anon, name="ed",
                            role_edit=lambda: role_edit, role_delete_books=lambda: role_delete, id=1)
 
 
@@ -149,3 +149,61 @@ def test_update_metadata_collects_field_errors():
             resp = inspect.unwrap(mod.update_metadata)(5)
     body = json.loads(resp.get_data())
     assert body["errors"]["languages"] == "Invalid languages"
+
+
+# ── format delete + convert (#18) ────────────────────────────────────────────
+
+@pytest.mark.unit
+def test_convert_requires_edit_role():
+    from cps.api import edit as mod
+    with _ctx("/api/v1/books/5/convert", body={"from": "epub", "to": "mobi"}):
+        with patch.object(mod, "current_user", _editor(role_edit=False)):
+            resp = inspect.unwrap(mod.convert_format)(5)
+    assert resp[1] == 403
+
+
+@pytest.mark.unit
+def test_convert_same_format_400():
+    from cps.api import edit as mod
+    with _ctx("/api/v1/books/5/convert", body={"from": "epub", "to": "epub"}):
+        with patch.object(mod, "current_user", _editor()), \
+             patch.object(mod.calibre_db, "get_book", return_value=SimpleNamespace(id=5)):
+            resp = inspect.unwrap(mod.convert_format)(5)
+    assert resp[1] == 400
+
+
+@pytest.mark.unit
+def test_convert_success_calls_core():
+    from cps.api import edit as mod
+    with _ctx("/api/v1/books/5/convert", body={"from": "epub", "to": "mobi"}):
+        with patch.object(mod, "current_user", _editor()), \
+             patch.object(mod.calibre_db, "get_book", return_value=SimpleNamespace(id=5)), \
+             patch.object(mod, "config", SimpleNamespace(get_book_path=lambda: "/books")), \
+             patch.object(mod, "convert_book_format", return_value=None) as core:
+            resp = inspect.unwrap(mod.convert_format)(5)
+    # success returns a Response (jsonify), not an (resp, status) tuple
+    body = json.loads(resp.get_data())
+    assert body["ok"] is True
+    core.assert_called_once()
+    assert core.call_args.args[2] == "EPUB" and core.call_args.args[3] == "MOBI"
+
+
+@pytest.mark.unit
+def test_delete_format_requires_delete_role():
+    from cps.api import edit as mod
+    with _ctx("/api/v1/books/5/formats/epub/delete"):
+        with patch.object(mod, "current_user", _editor(role_delete=False)):
+            resp = inspect.unwrap(mod.delete_format)(5, "epub")
+    assert resp[1] == 403
+
+
+@pytest.mark.unit
+def test_delete_format_uses_core_with_uppercased_format():
+    from cps.api import edit as mod
+    with _ctx("/api/v1/books/5/formats/epub/delete"):
+        with patch.object(mod, "current_user", _editor()), \
+             patch.object(mod.calibre_db, "get_book", return_value=SimpleNamespace(id=5)), \
+             patch.object(mod, "delete_book_from_table") as core:
+            resp = inspect.unwrap(mod.delete_format)(5, "epub")
+    assert resp[1] == 204
+    core.assert_called_once_with(5, "EPUB", True)

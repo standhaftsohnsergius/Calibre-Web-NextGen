@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
-import { ChevronLeft, Save } from 'lucide-react';
-import { useBookMetadata, useUpdateMetadata } from '../lib/queries';
+import { ChevronLeft, Save, Trash2, RefreshCw } from 'lucide-react';
+import {
+  useBookMetadata, useUpdateMetadata, useBook, useMe, useDeleteFormat, useConvertFormat,
+} from '../lib/queries';
 import { Button } from '../components/Button';
 import { SpinnerCentered } from '../components/Spinner';
 import { EmptyState } from '../components/EmptyState';
@@ -148,7 +150,80 @@ export function EditBook({ id }: { id: string }) {
           {banner && <span className={banner.ok ? styles.msgOk : styles.msgErr}>{banner.text}</span>}
         </div>
       </form>
+
+      <FormatsManager id={id} />
     </main>
+  );
+}
+
+/** Manage a book's files: delete a format, or queue a conversion. */
+function FormatsManager({ id }: { id: string }) {
+  const { data: book } = useBook(id);
+  const me = useMe().data;
+  const deleteFormat = useDeleteFormat(id);
+  const convertFormat = useConvertFormat(id);
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const formats = book?.formats.map((f) => f.format) ?? [];
+  if (formats.length === 0) return null;
+  const canDelete = !!me?.role?.delete_books;
+
+  const onConvert = (e: React.FormEvent) => {
+    e.preventDefault();
+    setMsg(null);
+    convertFormat.mutate(
+      { from: from || formats[0], to: to.trim().toUpperCase() },
+      {
+        onSuccess: (r) => { setMsg({ ok: true, text: r.message }); setTo(''); },
+        onError: (err) => setMsg({ ok: false, text: err instanceof ApiError ? err.message : 'Convert failed.' }),
+      },
+    );
+  };
+
+  return (
+    <section className={styles.formatsSection}>
+      <h2 className={styles.subTitle}>Files</h2>
+      <ul className={styles.formatList}>
+        {book!.formats.map((f) => (
+          <li key={f.format} className={styles.formatItem}>
+            <span className={styles.formatName}>{f.format}</span>
+            <a className={styles.formatDownload} href={f.download_url} download>Download</a>
+            {canDelete && (
+              <button className={styles.formatDelete}
+                onClick={() => {
+                  if (window.confirm(`Delete the ${f.format} file? The book stays; only this format is removed.`)) {
+                    deleteFormat.mutate(f.format);
+                  }
+                }}
+                disabled={deleteFormat.isPending}
+                aria-label={`Delete ${f.format}`}>
+                <Trash2 size={14} />
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <form className={styles.convertForm} onSubmit={onConvert}>
+        <label className={styles.fieldNarrow}>
+          <span className={styles.label}>Convert from</span>
+          <select className={styles.inputNarrow} value={from || formats[0]} onChange={(e) => setFrom(e.target.value)}>
+            {formats.map((f) => <option key={f} value={f}>{f}</option>)}
+          </select>
+        </label>
+        <label className={styles.fieldNarrow}>
+          <span className={styles.label}>to</span>
+          <input className={styles.inputNarrow} value={to} onChange={(e) => setTo(e.target.value)}
+            placeholder="e.g. MOBI" />
+        </label>
+        <Button type="submit" variant="ghost" disabled={convertFormat.isPending || !to.trim()}>
+          <RefreshCw size={15} /> Convert
+        </Button>
+        {msg && <span className={msg.ok ? styles.msgOk : styles.msgErr}>{msg.text}</span>}
+      </form>
+    </section>
   );
 }
 

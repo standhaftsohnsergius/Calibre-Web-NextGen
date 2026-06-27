@@ -19,6 +19,7 @@ from .. import calibre_db, config, db, ub, isoLanguages
 from ..cw_login import current_user
 from ..usermanagement import login_required_if_no_ano
 from ..editbooks import edit_book_param, delete_book_from_table
+from ..helper import convert_book_format
 
 # Fields the SPA edit form can change, applied in this order. Title/authors come
 # first because they may restructure the book's directory; the rest follow.
@@ -138,3 +139,40 @@ def delete_book(book_id):
     # files-last) whole-book delete + shelf cleanup. book_format="" = whole book.
     delete_book_from_table(book_id, "", True)
     return "", 204
+
+
+@api_v1.route("/books/<int:book_id>/formats/<fmt>/delete", methods=["POST"])
+@login_required_if_no_ano
+def delete_format(book_id, fmt):
+    """Delete a single format from a book (keeps the book). Reuses the data-safe
+    delete core (re-checks role, DB-first/files-last)."""
+    if not current_user.is_authenticated or current_user.is_anonymous:
+        return _err("unauthorized", "You must be signed in", 401)
+    if not current_user.role_delete_books():
+        return _err("forbidden", "You are not allowed to delete books", 403)
+    if not calibre_db.get_book(book_id):
+        return _err("not_found", "Book not found", 404)
+    delete_book_from_table(book_id, fmt.upper(), True)
+    return "", 204
+
+
+@api_v1.route("/books/<int:book_id>/convert", methods=["POST"])
+@login_required_if_no_ano
+def convert_format(book_id):
+    """Queue a format conversion. Body: {from, to}. Reuses helper.convert_book_format."""
+    guard = _require_edit()
+    if guard:
+        return guard
+    if not calibre_db.get_book(book_id):
+        return _err("not_found", "Book not found", 404)
+    data = request.get_json(silent=True) or {}
+    src = (data.get("from") or "").strip().upper()
+    dst = (data.get("to") or "").strip().upper()
+    if not src or not dst:
+        return _err("invalid_request", "Source and target formats are required", 400)
+    if src == dst:
+        return _err("invalid_request", "Source and target formats are the same", 400)
+    rtn = convert_book_format(book_id, config.get_book_path(), src, dst, current_user.name)
+    if rtn is None:
+        return jsonify({"ok": True, "message": "Queued for conversion to %s" % dst})
+    return _err("convert_failed", "There was an error converting this book: %s" % rtn, 400)

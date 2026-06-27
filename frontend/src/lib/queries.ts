@@ -383,6 +383,27 @@ export function useUpdateMetadata(id: string | number) {
   });
 }
 
+/** Delete a single format from a book (keeps the book). */
+export function useDeleteFormat(id: string | number) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (fmt: string) =>
+      apiPost(`/api/v1/books/${id}/formats/${encodeURIComponent(fmt)}/delete`),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['book', String(id)] });
+      void qc.invalidateQueries({ queryKey: ['books'] });
+    },
+  });
+}
+
+/** Queue a format conversion (from -> to). */
+export function useConvertFormat(id: string | number) {
+  return useMutation({
+    mutationFn: (v: { from: string; to: string }) =>
+      apiPost<{ ok: boolean; message: string }>(`/api/v1/books/${id}/convert`, v),
+  });
+}
+
 // ── Reader (bookmark / progress) ─────────────────────────────────────────────
 
 export function useBookmark(bookId: string | number, format = 'epub') {
