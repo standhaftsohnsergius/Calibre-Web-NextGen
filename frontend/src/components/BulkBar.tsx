@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Check, X, BookCopy, Trash2, CheckCheck, Pencil } from 'lucide-react';
-import { useBulkActions, useShelves, useMe } from '../lib/queries';
+import { Check, X, BookCopy, Trash2, CheckCheck, Pencil, Combine } from 'lucide-react';
+import { useBulkActions, useShelves, useMe, useMergeBooks } from '../lib/queries';
 import { useT } from '../lib/i18n';
 import { Spinner } from './Spinner';
 import type { MetadataUpdate } from '../lib/api';
@@ -20,6 +20,7 @@ export function BulkBar({ ids, onClear, onChanged }: BulkBarProps) {
   const t = useT();
   const me = useMe().data;
   const { markRead, addToShelf, remove, setMetadata } = useBulkActions();
+  const mergeBooks = useMergeBooks();
   const { data: shelvesData } = useShelves();
   const [shelfOpen, setShelfOpen] = useState(false);
   const shelfRef = useRef<HTMLDivElement>(null);
@@ -40,8 +41,15 @@ export function BulkBar({ ids, onClear, onChanged }: BulkBarProps) {
   const editableShelves = (shelvesData?.items ?? []).filter(
     (s) => s.is_owner || (s.is_public && canEditPublic),
   );
-  const busy = markRead.isPending || addToShelf.isPending || remove.isPending || setMetadata.isPending;
+  const busy = markRead.isPending || addToShelf.isPending || remove.isPending
+    || setMetadata.isPending || mergeBooks.isPending;
   const count = ids.length;
+
+  const onMerge = () => {
+    if (count < 2) return;
+    if (!window.confirm(t('Merge %(n)s books into the first selected? The others are removed after their formats are copied over.', { n: count }))) return;
+    mergeBooks.mutate(ids, { onSuccess: () => { onChanged?.(); onClear(); } });
+  };
 
   const onDelete = () => {
     if (!window.confirm(`Delete ${count} book${count !== 1 ? 's' : ''}? This cannot be undone.`)) return;
@@ -130,6 +138,12 @@ export function BulkBar({ ids, onClear, onChanged }: BulkBarProps) {
         {canEdit && (
           <button className={styles.action} disabled={busy} onClick={() => setMetaOpen((o) => !o)}>
             <Pencil size={15} /> {t('Edit metadata')}
+          </button>
+        )}
+
+        {canEdit && count >= 2 && (
+          <button className={styles.action} disabled={busy} onClick={onMerge}>
+            <Combine size={15} /> {t('Merge')}
           </button>
         )}
 

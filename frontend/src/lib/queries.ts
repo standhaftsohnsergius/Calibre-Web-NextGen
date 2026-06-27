@@ -383,6 +383,16 @@ export function useBulkActions() {
   return { markRead, addToShelf, remove, setMetadata };
 }
 
+/** Merge books: the first id is the target (kept); the rest are merged into it
+ *  (their formats copied over, then deleted). Reuses the legacy /ajax/mergebooks. */
+export function useMergeBooks() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: number[]) => apiPost('/ajax/mergebooks', { Merge_books: ids }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['books'] }),
+  });
+}
+
 // ── Upload ───────────────────────────────────────────────────────────────────
 
 export function useUploadBooks() {
