@@ -12,11 +12,20 @@ from flask import jsonify, request
 from sqlalchemy.exc import IntegrityError
 
 from . import api_v1
-from .. import ub, constants, config
+from .. import ub, constants, config, calibre_db
 from ..cw_login import current_user
+from ..cw_babel import get_available_locale
 from ..usermanagement import login_required_if_no_ano
 from ..helper import valid_email, check_email, check_username, valid_password, generate_password_hash
 from ..admin import _delete_user
+
+# UI-configuration fields the SPA admin form can read/write natively. Scoped to
+# the safe, high-traffic display settings — the deep security config (LDAP,
+# OAuth, SMTP, SSL, external binaries) stays on the legacy pages.
+_UI_CONFIG_INT = ("config_books_per_page", "config_random_books",
+                  "config_authors_max", "config_theme")
+_UI_CONFIG_STR = ("config_calibre_web_title", "config_default_language",
+                  "config_default_locale", "config_server_announcement")
 
 # SPA role key -> the User.role bitmask bit. ROLE_ANONYMOUS is intentionally
 # excluded — it's not an admin-assignable permission.
@@ -76,6 +85,63 @@ def admin_list_users():
     items = [_serialize_user(u) for u in users
              if (u.role & constants.ROLE_ANONYMOUS) != constants.ROLE_ANONYMOUS]
     return jsonify({"items": items})
+
+
+def _ui_config_payload():
+    locales = [{"id": str(loc), "name": loc.display_name} for loc in get_available_locale()]
+    languages = [{"id": "all", "name": "Show All"}]
+    try:
+        languages += [{"id": l.lang_code, "name": l.name}
+                      for l in calibre_db.speaking_language()]
+    except Exception:
+        pass
+    return {
+        "config_calibre_web_title": config.config_calibre_web_title,
+        "config_books_per_page": config.config_books_per_page,
+        "config_random_books": config.config_random_books,
+        "config_authors_max": config.config_authors_max,
+        "config_theme": config.config_theme,
+        "config_default_language": config.config_default_language,
+        "config_default_locale": config.config_default_locale,
+        "config_server_announcement": config.config_server_announcement or "",
+        "locales": locales,
+        "languages": languages,
+    }
+
+
+@api_v1.route("/admin/config")
+@login_required_if_no_ano
+def admin_get_config():
+    """Read the SPA-editable UI configuration (admin only)."""
+    guard = _require_admin()
+    if guard:
+        return guard
+    return jsonify(_ui_config_payload())
+
+
+@api_v1.route("/admin/config", methods=["POST"])
+@login_required_if_no_ano
+def admin_update_config():
+    """Update the SPA-editable UI configuration. Only the whitelisted display
+    fields are writable here; deep/security config stays on the legacy pages."""
+    guard = _require_admin()
+    if guard:
+        return guard
+    data = request.get_json(silent=True) or {}
+    for key in _UI_CONFIG_INT:
+        if key in data:
+            try:
+                setattr(config, key, int(data[key]))
+            except (TypeError, ValueError):
+                return _err("invalid_request", "%s must be a number" % key, 400)
+    for key in _UI_CONFIG_STR:
+        if key in data:
+            setattr(config, key, str(data[key] or ""))
+    try:
+        config.save()
+    except Exception as ex:
+        return _err("db_error", "Could not save configuration: %s" % ex, 500)
+    return jsonify(_ui_config_payload())
 
 
 @api_v1.route("/admin/users", methods=["POST"])

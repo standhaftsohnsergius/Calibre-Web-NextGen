@@ -295,6 +295,37 @@ export function useCreateAdminUser() {
   });
 }
 
+export interface AdminConfig {
+  config_calibre_web_title: string;
+  config_books_per_page: number;
+  config_random_books: number;
+  config_authors_max: number;
+  config_theme: number;
+  config_default_language: string;
+  config_default_locale: string;
+  config_server_announcement: string;
+  locales: { id: string; name: string }[];
+  languages: { id: string; name: string }[];
+}
+
+export function useAdminConfig() {
+  return useQuery<AdminConfig>({
+    queryKey: ['admin-config'],
+    queryFn: () => apiGet<AdminConfig>('/api/v1/admin/config'),
+  });
+}
+
+export function useUpdateAdminConfig() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: Partial<AdminConfig>) => apiPost<AdminConfig>('/api/v1/admin/config', vars),
+    onSuccess: (data) => {
+      qc.setQueryData(['admin-config'], data);
+      void qc.invalidateQueries({ queryKey: ['me'] });
+    },
+  });
+}
+
 export function useUpdateAdminUser() {
   const qc = useQueryClient();
   return useMutation({

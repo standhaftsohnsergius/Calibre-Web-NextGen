@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Shield, Trash2, Mail, UserPlus, ExternalLink, Settings, Database, Server, Clock, FileText, Sliders, BarChart3, Files } from 'lucide-react';
+import { useEffect } from 'react';
 import {
   useAdminUsers, useUpdateAdminUser, useDeleteAdminUser, useCreateAdminUser, useMe,
+  useAdminConfig, useUpdateAdminConfig,
 } from '../lib/queries';
 import { SpinnerCentered } from '../components/Spinner';
 import { EmptyState } from '../components/EmptyState';
@@ -199,9 +201,11 @@ export function Admin() {
         })}
       </div>
 
+      <AdminConfigForm />
+
       <div className={styles.settingsHead}>
         <Settings size={18} className={styles.headerIcon} />
-        <h2 className={styles.settingsTitle}>{t('Server configuration')}</h2>
+        <h2 className={styles.settingsTitle}>{t('More server configuration')}</h2>
       </div>
       <p className={styles.settingsHint}>
         {t('These open the full configuration pages. Changes there apply to the whole server.')}
@@ -216,5 +220,107 @@ export function Admin() {
         ))}
       </div>
     </main>
+  );
+}
+
+/** Native UI-configuration form (books/page, default language/locale, theme,
+ *  random count, title, announcement). The deep security config (LDAP/OAuth/
+ *  SMTP/SSL) stays on the legacy pages linked below. */
+function AdminConfigForm() {
+  const t = useT();
+  const { data: cfg } = useAdminConfig();
+  const update = useUpdateAdminConfig();
+  const [form, setForm] = useState<Record<string, string | number>>({});
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  useEffect(() => {
+    if (!cfg) return;
+    setForm({
+      config_calibre_web_title: cfg.config_calibre_web_title,
+      config_books_per_page: cfg.config_books_per_page,
+      config_random_books: cfg.config_random_books,
+      config_authors_max: cfg.config_authors_max,
+      config_theme: cfg.config_theme,
+      config_default_language: cfg.config_default_language,
+      config_default_locale: cfg.config_default_locale,
+      config_server_announcement: cfg.config_server_announcement,
+    });
+  }, [cfg]);
+
+  if (!cfg) return null;
+  const set = (k: string, v: string | number) => setForm((f) => ({ ...f, [k]: v }));
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setMsg(null);
+    update.mutate(form, {
+      onSuccess: () => setMsg({ ok: true, text: t('Settings saved.') }),
+      onError: (err) => setMsg({ ok: false, text: err instanceof ApiError ? err.message : t('Could not save.') }),
+    });
+  };
+
+  return (
+    <form className={styles.newForm} onSubmit={onSubmit}>
+      <div className={styles.settingsHead} style={{ marginTop: 0 }}>
+        <Settings size={18} className={styles.headerIcon} />
+        <h2 className={styles.settingsTitle}>{t('Library settings')}</h2>
+      </div>
+      <div className={styles.newRow}>
+        <label className={styles.field}>
+          <span>{t('Site title')}</span>
+          <input value={String(form.config_calibre_web_title ?? '')}
+            onChange={(e) => set('config_calibre_web_title', e.target.value)} />
+        </label>
+        <label className={styles.field}>
+          <span>{t('Books per page')}</span>
+          <input type="number" min={1} value={String(form.config_books_per_page ?? '')}
+            onChange={(e) => set('config_books_per_page', e.target.value)} />
+        </label>
+        <label className={styles.field}>
+          <span>{t('Random books shown')}</span>
+          <input type="number" min={0} value={String(form.config_random_books ?? '')}
+            onChange={(e) => set('config_random_books', e.target.value)} />
+        </label>
+        <label className={styles.field}>
+          <span>{t('Max authors shown')}</span>
+          <input type="number" min={0} value={String(form.config_authors_max ?? '')}
+            onChange={(e) => set('config_authors_max', e.target.value)} />
+        </label>
+      </div>
+      <div className={styles.newRow}>
+        <label className={styles.field}>
+          <span>{t('Theme')}</span>
+          <select value={String(form.config_theme ?? 1)} onChange={(e) => set('config_theme', e.target.value)}>
+            <option value="0">{t('Light')}</option>
+            <option value="1">{t('Dark')}</option>
+          </select>
+        </label>
+        <label className={styles.field}>
+          <span>{t('Default interface language')}</span>
+          <select value={String(form.config_default_locale ?? 'en')}
+            onChange={(e) => set('config_default_locale', e.target.value)}>
+            {cfg.locales.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+          </select>
+        </label>
+        <label className={styles.field}>
+          <span>{t('Default book language')}</span>
+          <select value={String(form.config_default_language ?? 'all')}
+            onChange={(e) => set('config_default_language', e.target.value)}>
+            {cfg.languages.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+          </select>
+        </label>
+      </div>
+      <label className={styles.field}>
+        <span>{t('Server announcement (shown to all users)')}</span>
+        <input value={String(form.config_server_announcement ?? '')}
+          onChange={(e) => set('config_server_announcement', e.target.value)} />
+      </label>
+      <div className={styles.newActions}>
+        <button type="submit" className={styles.submitBtn} disabled={update.isPending}>
+          {update.isPending ? t('Saving…') : t('Save settings')}
+        </button>
+        {msg && <span className={msg.ok ? styles.msgOk : styles.msgErr}>{msg.text}</span>}
+      </div>
+    </form>
   );
 }
