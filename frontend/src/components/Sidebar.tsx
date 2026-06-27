@@ -179,11 +179,15 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
           </li>
           {(canUpload || isAdmin) && (
             <li>
-              <a href="/duplicates" className={styles.item}>
+              <Link
+                href="/duplicates"
+                className={isActive(location, '/duplicates', true) ? styles.itemActive : styles.item}
+                aria-current={isActive(location, '/duplicates', true) ? 'page' : undefined}
+                onClick={onNavigate}
+              >
                 <Files size={18} className={styles.icon} />
                 <span>{t('Duplicates')}</span>
-                <ExternalLink size={12} className={styles.icon} style={{ marginLeft: 'auto', opacity: 0.5 }} />
-              </a>
+              </Link>
             </li>
           )}
         </ul>

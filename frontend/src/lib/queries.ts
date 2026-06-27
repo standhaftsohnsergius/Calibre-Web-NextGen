@@ -537,6 +537,40 @@ export function useShelfMembership() {
   return { add, remove };
 }
 
+// ── Duplicates ───────────────────────────────────────────────────────────────
+
+export interface DuplicateBook {
+  id: number;
+  title: string;
+  authors: string;
+  formats: string[];
+  cover_url: string | null;
+}
+export interface DuplicateGroup {
+  group_hash: string;
+  title: string;
+  author: string;
+  count: number;
+  books: DuplicateBook[];
+}
+
+export function useDuplicates() {
+  return useQuery<{ items: DuplicateGroup[]; needs_scan: boolean }>({
+    queryKey: ['duplicates'],
+    queryFn: () => apiGet<{ items: DuplicateGroup[]; needs_scan: boolean }>('/api/v1/duplicates'),
+  });
+}
+
+/** Dismiss a duplicate group — reuses the legacy JSON route. */
+export function useDismissDuplicate() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (groupHash: string) =>
+      apiPost(`/duplicates/dismiss/${encodeURIComponent(groupHash)}`),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['duplicates'] }),
+  });
+}
+
 // ── Info: About / Tasks ──────────────────────────────────────────────────────
 
 export function useAbout() {
