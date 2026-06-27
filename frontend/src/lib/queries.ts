@@ -3,7 +3,7 @@ import { apiGet, apiPost, apiUpload, ApiError } from './api';
 import type {
   Me, BooksPage, BookDetail, EntityList, Shelf, ShelfDetail,
   SearchOptions, AdvancedSearchParams, AdvSearchResult, Account, ProfileUpdate,
-  BookMetadata, MetadataUpdate, UploadResult, AdminUser, AboutInfo, TaskItem,
+  BookMetadata, MetadataUpdate, UploadResult, AdminUser, AboutInfo, TaskItem, AuthConfig,
 } from './api';
 
 /** Entity kinds the catalog can be filtered by. Singular here; the browse-list
@@ -58,6 +58,28 @@ export function useLogin() {
       queryClient.setQueryData(['me'], data);
       void queryClient.invalidateQueries({ queryKey: ['me'] });
     },
+  });
+}
+
+export function useAuthConfig() {
+  return useQuery<AuthConfig>({
+    queryKey: ['auth-config'],
+    queryFn: () => apiGet<AuthConfig>('/api/v1/auth/config'),
+    staleTime: Infinity,
+  });
+}
+
+export function useRegister() {
+  return useMutation({
+    mutationFn: (vars: { name: string; email: string }) =>
+      apiPost<{ ok: boolean; message: string }>('/api/v1/auth/register', vars),
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (username: string) =>
+      apiPost<{ ok: boolean; message: string }>('/api/v1/auth/forgot', { username }),
   });
 }
 

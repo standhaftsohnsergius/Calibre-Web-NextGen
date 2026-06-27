@@ -132,3 +132,64 @@ def test_login_standard_login_disabled_returns_403():
     body = resp.get_json()
     assert body["error"]["code"] == "standard_login_disabled"
     lu.assert_not_called()
+
+
+# ── register / forgot / config (#22) ─────────────────────────────────────────
+
+@pytest.mark.unit
+def test_auth_config_is_public_and_shaped():
+    app = _app()
+    with patch.object(cps.api.auth, "config") as cfg, \
+         patch.object(cps.api.auth, "_oauth_providers", return_value=[]):
+        cfg.config_public_reg = True
+        cfg.config_register_email = False
+        cfg.get_mail_server_configured.return_value = True
+        cfg.config_disable_standard_login = False
+        resp = app.test_client().get("/api/v1/auth/config")
+    assert resp.status_code == 200
+    d = resp.get_json()
+    assert d["public_registration"] is True
+    assert d["mail_configured"] is True
+    assert d["oauth_providers"] == []
+
+
+@pytest.mark.unit
+def test_register_disabled_returns_403():
+    app = _app()
+    with patch.object(cps.api.auth, "config") as cfg:
+        cfg.config_public_reg = False
+        resp = app.test_client().post("/api/v1/auth/register",
+                                      json={"name": "x", "email": "y@z.com"})
+    assert resp.status_code == 403
+    assert resp.get_json()["error"]["code"] == "registration_disabled"
+
+
+@pytest.mark.unit
+def test_register_requires_mail_configured():
+    app = _app()
+    with patch.object(cps.api.auth, "config") as cfg:
+        cfg.config_public_reg = True
+        cfg.get_mail_server_configured.return_value = False
+        resp = app.test_client().post("/api/v1/auth/register",
+                                      json={"name": "x", "email": "y@z.com"})
+    assert resp.status_code == 400
+    assert resp.get_json()["error"]["code"] == "mail_not_configured"
+
+
+@pytest.mark.unit
+def test_forgot_always_ok_even_for_unknown_user():
+    app = _app()
+    with patch.object(cps.api.auth, "ub") as ub:
+        ub.session.query.return_value.filter.return_value.first.return_value = None
+        resp = app.test_client().post("/api/v1/auth/forgot", json={"username": "ghost"})
+    assert resp.status_code == 200
+    assert resp.get_json()["ok"] is True
+
+
+@pytest.mark.unit
+def test_oauth_providers_maps_ids_to_urls():
+    with patch.dict("cps.oauth_bb.oauth_check", {1: "GitHub", 2: "Google"}, clear=True):
+        provs = cps.api.auth._oauth_providers()
+    by_id = {p["id"]: p for p in provs}
+    assert by_id[1]["url"] == "/link/github"
+    assert by_id[2]["name"] == "Google"

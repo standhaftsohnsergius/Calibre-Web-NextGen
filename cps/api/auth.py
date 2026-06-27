@@ -3,12 +3,32 @@
 """Auth endpoints for /api/v1 — reuse the existing cw_login session + CSRF."""
 from flask import jsonify, request
 from sqlalchemy import func
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from . import api_v1
 from .serializers import serialize_user
 from .. import ub, config, limiter
 from ..cw_login import current_user, login_user, logout_user
+from ..helper import (
+    check_username, check_email, check_valid_domain, reset_password,
+    send_registration_mail, generate_random_password,
+)
+
+
+def _err(code, message, status):
+    return jsonify({"error": {"code": code, "message": message}}), status
+
+
+def _oauth_providers():
+    """Configured OAuth providers, as {id, name, url} for the SPA login buttons.
+    URLs match the legacy login template's oauth.* routes."""
+    urls = {1: "/link/github", 2: "/link/google", 3: "/link/generic"}
+    try:
+        from ..oauth_bb import oauth_check
+        return [{"id": cid, "name": name, "url": urls.get(cid, "")}
+                for cid, name in oauth_check.items() if cid in urls]
+    except Exception:
+        return []
 
 try:
     from flask_wtf.csrf import generate_csrf
@@ -87,3 +107,93 @@ def auth_login():
 def auth_logout():
     logout_user()
     return "", 204
+
+
+@api_v1.route("/auth/config")
+def auth_config():
+    """Public: what the login screen needs to render register / forgot / OAuth."""
+    try:
+        mail_ok = bool(config.get_mail_server_configured())
+    except Exception:
+        mail_ok = False
+    return jsonify({
+        "public_registration": bool(getattr(config, "config_public_reg", False)),
+        "register_email": bool(getattr(config, "config_register_email", False)),
+        "mail_configured": mail_ok,
+        "standard_login_disabled": bool(getattr(config, "config_disable_standard_login", False)),
+        "oauth_providers": _oauth_providers(),
+    })
+
+
+@api_v1.route("/auth/register", methods=["POST"])
+@limiter.limit("40/day", key_func=lambda: get_remote_address())
+@limiter.limit("3/minute", key_func=lambda: get_remote_address())
+def auth_register():
+    """Public self-registration. Mirrors web.register_post: gated on
+    config_public_reg, requires a configured mail server, validates the
+    username/email + allowed-domain, then emails the generated password."""
+    if not config.config_public_reg:
+        return _err("registration_disabled", "Public registration is disabled", 403)
+    if not config.get_mail_server_configured():
+        return _err("mail_not_configured", "The server's email settings aren't configured", 400)
+    if current_user.is_authenticated:
+        return _err("already_authenticated", "You're already signed in", 400)
+
+    data = request.get_json(silent=True) or request.form
+    email = (data.get("email") or "").strip()
+    name = (data.get("name") or "").strip()
+    nickname = email if config.config_register_email else name
+    if not nickname or not email:
+        return _err("invalid_request", "Please complete all fields", 400)
+    try:
+        nickname = check_username(nickname)
+        email = check_email(email)
+    except Exception as ex:  # validators raise generic Exception with a message
+        return _err("invalid_request", str(ex), 400)
+    if not check_valid_domain(email):
+        return _err("email_not_allowed", "That email domain isn't allowed to register", 403)
+
+    content = ub.User()
+    content.name = nickname
+    content.email = email
+    password = generate_random_password(config.config_password_min_length)
+    content.password = generate_password_hash(password)
+    content.role = config.config_default_role
+    content.locale = config.config_default_locale
+    content.sidebar_view = config.config_default_show
+    try:
+        content.theme = getattr(config, "config_theme", 1)
+    except Exception:
+        pass
+    try:
+        ub.session.add(content)
+        ub.session.commit()
+        try:
+            from ..oauth_bb import register_user_with_oauth
+            register_user_with_oauth(content)
+        except Exception:
+            pass  # oauth optional
+        send_registration_mail(email, nickname, password)
+    except Exception:
+        ub.session.rollback()
+        return _err("server_error", "Could not complete registration. Try again later.", 500)
+    return jsonify({"ok": True, "message": "Confirmation email sent"})
+
+
+@api_v1.route("/auth/forgot", methods=["POST"])
+@limiter.limit("40/day", key_func=lambda: get_remote_address())
+@limiter.limit("3/minute", key_func=lambda: get_remote_address())
+def auth_forgot():
+    """Email a reset password. Always returns ok (never reveals whether the
+    account exists) — an improvement over the legacy flash that leaked it."""
+    data = request.get_json(silent=True) or request.form
+    username = (data.get("username") or "").strip().lower()
+    if username:
+        user = ub.session.query(ub.User).filter(func.lower(ub.User.name) == username).first()
+        if user is not None and user.name != "Guest":
+            try:
+                reset_password(user.id)
+            except Exception:
+                pass
+    return jsonify({"ok": True,
+                    "message": "If that account exists, a reset email has been sent."})

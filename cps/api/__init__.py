@@ -23,6 +23,9 @@ _PUBLIC_ENDPOINTS = {
     "api_v1.auth_login",
     "api_v1.auth_me",
     "api_v1.auth_logout",
+    "api_v1.auth_config",
+    "api_v1.auth_register",
+    "api_v1.auth_forgot",
     "api_v1.i18n_catalog",
 }
 

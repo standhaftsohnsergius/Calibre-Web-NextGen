@@ -197,6 +197,20 @@ export interface AdminUser {
   roles: Record<string, boolean>;
 }
 
+export interface OAuthProvider {
+  id: number;
+  name: string;
+  url: string;
+}
+
+export interface AuthConfig {
+  public_registration: boolean;
+  register_email: boolean;
+  mail_configured: boolean;
+  standard_login_disabled: boolean;
+  oauth_providers: OAuthProvider[];
+}
+
 export interface AboutInfo {
   counts: { books: number; authors: number; categories: number; series: number };
   versions: Record<string, string>;
