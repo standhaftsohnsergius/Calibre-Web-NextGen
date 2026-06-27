@@ -160,11 +160,15 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
             plain <a> so they leave the SPA. Reachable, not omitted. */}
         <ul className={styles.list}>
           <li>
-            <a href="/table" className={styles.item}>
+            <Link
+              href="/table"
+              className={isActive(location, '/table', true) ? styles.itemActive : styles.item}
+              aria-current={isActive(location, '/table', true) ? 'page' : undefined}
+              onClick={onNavigate}
+            >
               <Table2 size={18} className={styles.icon} />
               <span>{t('Table view')}</span>
-              <ExternalLink size={12} className={styles.icon} style={{ marginLeft: 'auto', opacity: 0.5 }} />
-            </a>
+            </Link>
           </li>
           <li>
             <a href="/magicshelf" className={styles.item}>
