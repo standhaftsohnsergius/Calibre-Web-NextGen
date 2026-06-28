@@ -16,7 +16,85 @@ is for things you can see or feel when running the app.
 
 ## [Unreleased]
 
+### Added
+- **The version number on the Admin page links to its release notes.** The
+  "Calibre-Web NextGen" version in the Version Information table (Admin page) is
+  now a link to that release's notes on GitHub, so you can see what changed in
+  the build you're running. Dev/canary builds link to the releases list instead.
+  Requested by @chloeroform.
+- **Email your users straight from the admin area.** A new "Email Your Users"
+  page (Admin → Email Your Users) lets you write a message and send it by email
+  to everyone — or just the people you pick. Handy for announcing new books or
+  server updates to the people sharing your library. It uses the same mail
+  server you already set up for password resets, formats with HTML (links,
+  bold) with an automatic plain-text fallback, can pull in your announcement
+  banner text with one click, and has a "Send test to me" button so you can
+  preview before sending. Messages send in the background — check Tasks for
+  delivery. Requested by @froggybottomboys.
+
 ### Fixed
+- **Bulk actions and drag-to-merge now work behind a reverse proxy on a
+  sub-path.** If you run NextGen under a proxy mounted at something like
+  `example.com/books/`, marking books read/unread, adding a selection to a
+  shelf, deleting selected books, the cover badge toggle, and dragging one
+  book onto another to merge all failed with a 404 — those requests went to
+  the server root instead of your sub-path. They now use the correct path in
+  every setup. Nothing changes if you don't use a sub-path proxy. Reported by
+  @chloeroform.
+- **The "Discover (Random Books)" row now actually appears.** Turning on "Show
+  Random Books in Detail View" did nothing — a leftover theme rule hid the
+  random-books row for everyone, so the "No. of Random Books to Display" setting
+  had no visible effect. The row now shows as a "Discover (Random Books)" strip
+  above your book list, on desktop and mobile. Reported by @chloeroform.
+- **Changing the "Regular Expression for Title Sorting" now re-sorts your whole
+  library right away.** After editing that setting (Admin → UI Configuration),
+  the book order didn't change until you edited each book one by one — the new
+  rule only applied to books you touched afterwards. Saving the setting now
+  recomputes the sort order for every book immediately, the same way Calibre
+  desktop does. Reported by @chloeroform.
+
+## [v4.0.172] - 2026-06-25
+
+### Added
+- **Books you're partway through now show a "Currently reading" badge.** If you
+  read on KOReader (or a Kobo) and your progress syncs back, the book used to
+  look exactly like one you'd never opened — the web only marked books as read
+  once you finished them. Now an in-progress book gets an amber "Currently
+  reading" marker on its detail page and a badge on its cover in the grid,
+  shelves, search and author pages, so synced reading progress is actually
+  visible. Reported by @barukh27.
+
+### Fixed
+- **Sorting the Books List by Title no longer breaks the table.** In the "Books
+  List" table view, clicking the Title, Title Sort, or Series ID column header
+  produced an empty table and flooded the log with `no such column: title`
+  errors — only Author sorting worked. The table now sorts correctly by every
+  column. Reported by @Mr-Me-torn.
+
+## [v4.0.171] - 2026-06-24
+
+### Added
+- **Choose what permissions new Generic OAuth users get.** Instead of every
+  OAuth sign-up inheriting the one global default role, admins can now set a
+  per-provider permission set (downloads, viewer, uploads, edit, delete, change
+  password, edit public shelves) for accounts auto-created via Generic OAuth.
+  Leaving it unconfigured keeps the existing global default, so upgrading
+  changes nothing until you opt in. Existing users are untouched. Thanks to
+  @lduesing.
+- **Restrict Generic OAuth/OIDC login to specific identity-provider groups.**
+  Admins can now require that a user belong to one of an allowed list of OAuth
+  groups before an account is created or logged in, and can name the token claim
+  that carries the group list (handy for Keycloak/Authentik, which often use a
+  custom claim rather than `groups`). Membership is enforced before any account
+  is provisioned, and turning the requirement on with an empty allow-list denies
+  everyone rather than admitting all directory users. Thanks to @lduesing.
+
+### Fixed
+- **"Send to eReader" now shows the real reason it failed.** When your mail
+  server rejected the recipient address, the send used to die with a confusing
+  `TypeError` and hid the actual rejection. It now reports the address and the
+  server's reason (e.g. `kid@home.net: 550 User unknown`) so you can fix it.
+  Reported by @kurtlieber.
 - **Beta (`:dev`) builds no longer nag about a "false" update.** If you run the
   beta image, the "update available" banner kept pointing at the latest *stable*
   release even though a beta build is actually ahead of it. Beta/unversioned

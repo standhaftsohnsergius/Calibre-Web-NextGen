@@ -61,6 +61,32 @@ except NameError:
 # Custom OAuth2Session for generic OIDC to handle SSL and scope validation (Issue #715)
 from flask_dance.consumer.requests import OAuth2Session as BaseOAuth2Session
 
+def _oauth_role_enabled(role_value, role_flag):
+    """True if ``role_flag`` is set in ``role_value`` (a role bitmask), guarding
+    against a None/non-numeric stored value."""
+    try:
+        return constants.has_flag(int(role_value or 0), role_flag)
+    except (TypeError, ValueError):
+        return False
+
+
+def _oauth_effective_default_role(provider_role, config_default_role):
+    """Resolve the role assigned to a newly created Generic OAuth user.
+
+    ``provider_role`` is the per-provider ``oauth_default_role`` column. NULL
+    (None) means the admin never configured a per-provider role, so we fall
+    back to the global ``config_default_role`` — preserving the pre-feature
+    behavior and avoiding a silent permission-strip on upgrade. An explicitly
+    stored value (including 0 = no extra permissions) is honored as configured.
+    """
+    if provider_role is None:
+        return config_default_role
+    try:
+        return int(provider_role)
+    except (TypeError, ValueError):
+        return config_default_role
+
+
 class GenericOIDCSession(BaseOAuth2Session):
     """
     Custom OAuth2Session for generic OIDC providers like Authentik.
@@ -167,6 +193,42 @@ oauth_check = {}
 oauthblueprints = []
 oauth = Blueprint('oauth', __name__)
 log = logger.create()
+
+
+def _normalize_oauth_claim_values(value):
+    """Normalize an OIDC claim payload into a clean list of strings.
+
+    Accepts the three shapes an IdP can send a group/role claim as:
+    a JSON list, a comma- or space-separated string, or None/other. Empty
+    and whitespace-only entries are dropped.
+    """
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    if isinstance(value, str):
+        return [item.strip() for item in value.replace(',', ' ').split() if item.strip()]
+    return []
+
+
+def _oauth_claim_contains_any(claim_values, expected_values):
+    """Case-insensitive membership test: True if any expected value is present
+    in claim_values (e.g. 'Admin' in the claim matches an expected 'admin')."""
+    claim_value_set = {value.lower() for value in claim_values}
+    return any(value.lower() in claim_value_set for value in expected_values)
+
+
+def _oauth_group_access_denied(require_group, allowed_groups, user_groups):
+    """Authorization gate for Generic OAuth group membership.
+
+    Returns True when the login must be rejected. Membership is only enforced
+    when ``require_group`` is set; then the user must be in at least one
+    ``allowed_groups`` entry. An empty allow-list with the requirement enabled
+    denies everyone (fail closed) rather than silently admitting all users.
+    """
+    if not require_group:
+        return False
+    if not allowed_groups:
+        return True
+    return not _oauth_claim_contains_any(user_groups, allowed_groups)
 
 
 def oauth_required(f):
@@ -332,20 +394,25 @@ def register_user_from_generic_oauth(token=None):
                 log.info("OAuth login matched existing user by email '%s' (user '%s'), provider username '%s'",
                          provider_email, user.name, provider_username)
 
-    # Check if user should have admin role based on group membership
-    # Handle various group formats: list, string, or None
-    groups_present = 'groups' in userinfo
-    user_groups = userinfo.get('groups', [])
-    if isinstance(user_groups, str):
-        # Handle comma-separated or space-separated string
-        user_groups = [g.strip() for g in user_groups.replace(',', ' ').split() if g.strip()]
-    elif not isinstance(user_groups, list):
-        user_groups = []
-    
+    # Resolve OAuth/OIDC group membership from the configured claim, then
+    # enforce required-group access BEFORE creating or logging in a user, so a
+    # rejected login never auto-provisions an account or grants any role.
+    group_claim = generic.get('oauth_group_claim') or 'groups'
+    groups_present = group_claim in userinfo
+    user_groups = _normalize_oauth_claim_values(userinfo.get(group_claim, []))
+
+    allowed_groups = _normalize_oauth_claim_values(generic.get('oauth_allowed_groups', ''))
+    require_group = bool(generic.get('oauth_require_group'))
+    if _oauth_group_access_denied(require_group, allowed_groups, user_groups):
+        log.warning(
+            "OAuth login rejected for '%s': not a member of any allowed group. Allowed: %s, claim '%s': %s",
+            provider_username, allowed_groups, group_claim, user_groups,
+        )
+        flash(_("Login failed: your account is not allowed to access this application."), category="error")
+        return redirect(url_for("web.login"))
+
     admin_group = generic.get('oauth_admin_group', 'admin')
-    # Case-insensitive group comparison to handle "admin" vs "Admin" etc.
-    should_be_admin = (admin_group and 
-                       any(g.lower() == admin_group.lower() for g in user_groups))
+    should_be_admin = bool(admin_group and _oauth_claim_contains_any(user_groups, [admin_group]))
 
     if not user:
         user = ub.User()
@@ -361,7 +428,8 @@ def register_user_from_generic_oauth(token=None):
             log.info("New OAuth user '%s' granted admin role via group '%s' (groups: %s)", 
                     provider_username, admin_group, user_groups)
         else:
-            user.role = config.config_default_role
+            user.role = _oauth_effective_default_role(
+                generic.get('oauth_default_role'), config.config_default_role)
             if should_be_admin and not config.config_enable_oauth_group_admin_management:
                 log.debug("New OAuth user '%s' not granted admin role - group-based management disabled", 
                          provider_username)
@@ -705,6 +773,11 @@ def generate_oauth_blueprints():
     if not scope_value or not scope_value.strip():
         scope_value = 'email openid profile'  # Sorted alphabetically
     
+    # The default-role checkboxes reflect the EFFECTIVE default (the per-provider
+    # role if configured, else the global default), so opening the form shows the
+    # real current behavior and saving it unchanged is a no-op.
+    effective_default_role = _oauth_effective_default_role(
+        generic.oauth_default_role, config.config_default_role)
     ele3 = dict(provider_name='generic',
                 id=generic.id,
                 active=generic.active,
@@ -719,7 +792,18 @@ def generate_oauth_blueprints():
                 username_mapper=generic.username_mapper,
                 email_mapper=generic.email_mapper,
                 login_button=generic.login_button or 'OpenID Connect',
-                oauth_admin_group=generic.oauth_admin_group or 'admin')
+                oauth_admin_group=generic.oauth_admin_group or 'admin',
+                oauth_group_claim=generic.oauth_group_claim or 'groups',
+                oauth_allowed_groups=generic.oauth_allowed_groups or '',
+                oauth_require_group=bool(generic.oauth_require_group),
+                oauth_default_role=generic.oauth_default_role,
+                oauth_default_role_download=_oauth_role_enabled(effective_default_role, constants.ROLE_DOWNLOAD),
+                oauth_default_role_viewer=_oauth_role_enabled(effective_default_role, constants.ROLE_VIEWER),
+                oauth_default_role_upload=_oauth_role_enabled(effective_default_role, constants.ROLE_UPLOAD),
+                oauth_default_role_edit=_oauth_role_enabled(effective_default_role, constants.ROLE_EDIT),
+                oauth_default_role_delete=_oauth_role_enabled(effective_default_role, constants.ROLE_DELETE_BOOKS),
+                oauth_default_role_passwd=_oauth_role_enabled(effective_default_role, constants.ROLE_PASSWD),
+                oauth_default_role_edit_shelf=_oauth_role_enabled(effective_default_role, constants.ROLE_EDIT_SHELFS))
     oauthblueprints.append(ele3)
 
     for element in oauthblueprints:

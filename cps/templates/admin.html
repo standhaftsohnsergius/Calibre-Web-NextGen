@@ -103,6 +103,7 @@
       {% endif %}
     {% endif %}
       <a class="btn btn-default emailconfig" id="admin_edit_email" href="{{url_for('admin.edit_mailsettings')}}">{{_('Edit Email Server Settings')}}</a>
+      <a class="btn btn-default" id="admin_broadcast_email" href="{{url_for('admin.broadcast_email')}}">{{_('Email Your Users')}}</a>
     </div>
   </div>
 
@@ -255,7 +256,7 @@
         <tbody>
           <tr id="current_version">
             <td>Calibre-Web NextGen</td>
-            <td>{{cwa_version}} </td>
+            <td>{% if cwa_release_url %}<a href="{{cwa_release_url}}" target="_blank" rel="noopener noreferrer">{{cwa_version}}</a>{% else %}{{cwa_version}}{% endif %} </td>
             <td>
               {% if cwa_is_outdated and cwa_latest_tag %}
                 <i style="color:#cc7b19;">{{_('Update available')}}: <strong>{{cwa_latest_tag}}</strong></i>

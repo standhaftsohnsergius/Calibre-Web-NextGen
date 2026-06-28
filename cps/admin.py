@@ -37,7 +37,7 @@ from . import user_book_data
 from . import db, calibre_db, ub, web_server, config, updater_thread, gdriveutils, \
     kobo_sync_status, schedule
 from .helper import check_valid_domain, send_test_mail, reset_password, generate_password_hash, check_email, \
-    valid_email, check_username
+    valid_email, check_username, send_broadcast_email
 from .embed_helper import get_calibre_binarypath
 from .gdriveutils import is_gdrive_ready, gdrive_support
 from .render_template import render_title_template, get_sidebar_config
@@ -81,6 +81,23 @@ except ImportError as err:
     oauth_bb = MockOAuth()
 
 admi = Blueprint('admin', __name__)
+
+
+def _selected_generic_oauth_default_role(to_save):
+    role_map = {
+        "config_generic_oauth_default_download_role": constants.ROLE_DOWNLOAD,
+        "config_generic_oauth_default_viewer_role": constants.ROLE_VIEWER,
+        "config_generic_oauth_default_upload_role": constants.ROLE_UPLOAD,
+        "config_generic_oauth_default_edit_role": constants.ROLE_EDIT,
+        "config_generic_oauth_default_delete_role": constants.ROLE_DELETE_BOOKS,
+        "config_generic_oauth_default_passwd_role": constants.ROLE_PASSWD,
+        "config_generic_oauth_default_edit_shelf_role": constants.ROLE_EDIT_SHELFS,
+    }
+    role = 0
+    for form_name, role_flag in role_map.items():
+        if form_name in to_save:
+            role |= role_flag
+    return role
 
 
 def admin_required(f):
@@ -556,6 +573,8 @@ def cwa_get_update_indicator() -> tuple[bool, str]:
 def admin():
     cwa_version, kepubify_version, calibre_version = cwa_get_package_versions()
     is_outdated, latest_tag = cwa_get_update_indicator()
+    from .updater import release_url_for_version
+    cwa_release_url = release_url_for_version(cwa_version)
 
     all_user = ub.session.query(ub.User).all()
     # email_settings = mail_config.get_mail_settings()
@@ -566,6 +585,7 @@ def admin():
     return render_title_template("admin.html", allUser=all_user, config=config,
                                  cwa_version=cwa_version, kepubify_version=kepubify_version,
                                  calibre_version=calibre_version,
+                                 cwa_release_url=cwa_release_url,
                                  cwa_is_outdated=is_outdated,
                                  cwa_latest_tag=latest_tag,
                                  feature_support=feature_support,
@@ -923,6 +943,19 @@ def update_view_configuration():
         # call time via closure in ``_register_sqlite_udfs``; updating the
         # config object is sufficient — no per-connection re-registration.
         db.CalibreDB.update_config(config)
+        # New regex only changes title_sort() output going forward; existing
+        # books keep their previously-stored ``sort`` column (the metadata.db
+        # trigger recomputes it only when a title changes), so listings stay
+        # in the old order until each book is edited. Recompute the whole
+        # library now, like Calibre desktop does on a regex change. (#522)
+        try:
+            updated = calibre_db.reapply_title_sort()
+            log.info("Title-sort regex changed; recomputed sort for %s books", updated)
+        except Exception as ex:
+            log.error("Title-sort recompute failed: %s", ex)
+            flash(_("The title-sort rule was saved, but reordering the existing "
+                    "library failed — books may keep their previous order until "
+                    "you retry or edit them."), category="error")
 
     if not check_valid_read_column(to_save.get("config_read_column", "0")):
         flash(_("Invalid Read Column"), category="error")
@@ -1638,6 +1671,24 @@ def _configuration_oauth_helper(to_save):
             if to_save["config_generic_oauth_admin_group"] != element["oauth_admin_group"]:
                 reboot_required = True
                 update["oauth_admin_group"] = to_save["config_generic_oauth_admin_group"]
+
+            if to_save.get("config_generic_oauth_group_claim", "groups") != element.get("oauth_group_claim", "groups"):
+                reboot_required = True
+                update["oauth_group_claim"] = to_save.get("config_generic_oauth_group_claim", "groups")
+
+            if to_save.get("config_generic_oauth_allowed_groups", "") != element.get("oauth_allowed_groups", ""):
+                reboot_required = True
+                update["oauth_allowed_groups"] = to_save.get("config_generic_oauth_allowed_groups", "")
+
+            require_group = "config_generic_oauth_require_group" in to_save
+            if require_group != bool(element.get("oauth_require_group")):
+                reboot_required = True
+                update["oauth_require_group"] = require_group
+
+            oauth_default_role = _selected_generic_oauth_default_role(to_save)
+            if oauth_default_role != int(element.get("oauth_default_role") or 0):
+                reboot_required = True
+                update["oauth_default_role"] = oauth_default_role
         else:
             if to_save["config_" + str(element['id']) + "_oauth_client_id"] != element["oauth_client_id"]:
                 reboot_required = True
@@ -1851,6 +1902,115 @@ def update_mailsettings():
         flash(_("Email Server Settings updated"), category="success")
 
     return edit_mailsettings()
+
+
+# ---------------------------------------------------------------------------
+# Fork #225 (@froggybottomboys): admin email broadcast to users. Lets an admin
+# compose an HTML message and send it to selected users (or all users with an
+# email) via the existing async mail worker. Delivers the reporter's actual
+# ask (reach users proactively) on top of the v4.0.118 login banner.
+# ---------------------------------------------------------------------------
+
+def _broadcast_recipient_users():
+    """Users eligible to receive a broadcast: anyone with a non-empty email.
+
+    Returns lightweight dicts (id/name/email) ordered by name, for the
+    recipient picker. The Anonymous/guest account is excluded.
+    """
+    rows = ub.session.query(ub.User).filter(
+        ub.User.email.isnot(None), func.trim(ub.User.email) != ""
+    ).order_by(func.lower(ub.User.name)).all()
+    # Only offer users whose stored email yields at least one valid address,
+    # using the SAME canonicalizer the sender uses — so the picker shows exactly
+    # who would be mailed (no whitespace-only/malformed row that appears
+    # selectable then gets silently skipped) and displays the cleaned
+    # address(es).
+    out = []
+    for u in rows:
+        if u.role_anonymous():
+            continue
+        addrs = helper.valid_broadcast_addresses(u.email)
+        if addrs:
+            out.append({"id": u.id, "name": u.name, "email": ", ".join(addrs)})
+    return out
+
+
+def _render_broadcast_page(subject="", body=""):
+    recipients = _broadcast_recipient_users()
+    return render_title_template(
+        "broadcast_email.html",
+        title=_("Email Your Users"),
+        page="broadcast",
+        recipients=recipients,
+        mail_configured=config.get_mail_server_configured(),
+        announcement=config.config_server_announcement or "",
+        subject_value=subject,
+        body_value=body,
+    )
+
+
+@admi.route("/admin/broadcast", methods=["GET"])
+@user_login_required
+@admin_required
+def broadcast_email():
+    return _render_broadcast_page()
+
+
+@admi.route("/admin/broadcast", methods=["POST"])
+@user_login_required
+@admin_required
+def send_broadcast():
+    subject = strip_whitespaces(request.form.get("subject", "") or "")
+    body = request.form.get("body", "") or ""
+    is_test = bool(request.form.get("test"))
+
+    if not config.get_mail_server_configured():
+        flash(_("Please configure the email server under Edit Email Server Settings first."),
+              category="error")
+        return _render_broadcast_page(subject, body)
+
+    if not subject:
+        flash(_("Please enter a subject for the announcement email."), category="error")
+        return _render_broadcast_page(subject, body)
+    if not strip_whitespaces(body):
+        flash(_("Please enter a message body for the announcement email."), category="error")
+        return _render_broadcast_page(subject, body)
+
+    if is_test:
+        # Send-to-self preview: only ever the current admin's own address.
+        if not current_user.email:
+            flash(_("Please set an email address on your own account first..."), category="error")
+            return _render_broadcast_page(subject, body)
+        recipients = [current_user.email]
+    else:
+        # Resolve recipient emails SERVER-SIDE from the posted user ids — never
+        # trust posted email strings. "select all" sends to every eligible user.
+        eligible = {str(u["id"]): u["email"] for u in _broadcast_recipient_users()}
+        if request.form.get("select_all"):
+            recipients = list(eligible.values())
+        else:
+            chosen = request.form.getlist("recipients")
+            recipients = [eligible[cid] for cid in chosen if cid in eligible]
+        if not recipients:
+            flash(_("Please select at least one recipient."), category="error")
+            return _render_broadcast_page(subject, body)
+
+    queued, skipped = send_broadcast_email(subject, body, recipients, current_user.name)
+
+    if queued == 0:
+        flash(_("No valid recipients — nothing was sent."), category="error")
+        return _render_broadcast_page(subject, body)
+
+    if is_test:
+        flash(_("Test announcement email queued to %(email)s — check Tasks for the result.",
+                email=current_user.email), category="info")
+        return _render_broadcast_page(subject, body)
+
+    msg = _("Announcement email queued for %(num)s recipient(s) — check Tasks for delivery.", num=queued)
+    if skipped:
+        msg += " " + _("%(num)s address(es) were skipped as invalid or duplicate.", num=skipped)
+    flash(msg, category="success")
+    return redirect(url_for('admin.broadcast_email'))
 
 
 @admi.route("/admin/scheduledtasks")
