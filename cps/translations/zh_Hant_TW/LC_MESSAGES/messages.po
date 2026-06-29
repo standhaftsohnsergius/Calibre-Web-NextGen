@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-06-29 00:23+0000\n"
+"POT-Creation-Date: 2026-06-29 04:07+0000\n"
 "PO-Revision-Date: 2020-09-27 22:18+0800\n"
 "Last-Translator: xlivevil <xlivevil@aliyun.com>\n"
 "Language-Team: zh_Hans_CN <LL@li.org>\n"
@@ -984,40 +984,40 @@ msgstr ""
 msgid "Change cover — %(title)s"
 msgstr "交換作者和標題"
 
-#: cps/cover_picker.py:211
+#: cps/cover_picker.py:231
 msgid "This book's cover is locked. Unlock it first."
 msgstr ""
 
-#: cps/cover_picker.py:224
+#: cps/cover_picker.py:244
 msgid "Provide a cover URL."
 msgstr ""
 
-#: cps/cover_picker.py:231
+#: cps/cover_picker.py:251
 msgid "This book doesn't have an embedded cover we can extract."
 msgstr ""
 
-#: cps/cover_picker.py:235
+#: cps/cover_picker.py:255
 #, fuzzy
 msgid "Unknown cover source."
 msgstr "連接錯誤"
 
-#: cps/cover_picker.py:264
+#: cps/cover_picker.py:284
 msgid "Could not save lock state."
 msgstr ""
 
-#: cps/cover_picker.py:311
+#: cps/cover_picker.py:331
 msgid "Only http(s) URLs can be previewed."
 msgstr ""
 
-#: cps/cover_picker.py:335
+#: cps/cover_picker.py:355
 msgid "Could not render the e-reader preview."
 msgstr ""
 
-#: cps/cover_picker.py:338
+#: cps/cover_picker.py:358
 msgid "Could not load a source image to preview."
 msgstr ""
 
-#: cps/cover_picker.py:537 cps/cover_picker.py:551
+#: cps/cover_picker.py:557 cps/cover_picker.py:571
 msgid "Cover save failed."
 msgstr ""
 
