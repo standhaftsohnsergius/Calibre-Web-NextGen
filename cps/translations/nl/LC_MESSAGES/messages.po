@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web (GPLV3)\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 17:23+0000\n"
+"POT-Creation-Date: 2026-07-01 19:35+0000\n"
 "PO-Revision-Date: 2026-04-26 13:31+0200\n"
 "Last-Translator: Michiel Cornelissen <michiel.cornelissen+gitbhun at proton."
 "me>\n"
@@ -6600,11 +6600,6 @@ msgstr ""
 msgid "Read"
 msgstr "Gelezen"
 
-#. New-UI "open the reader" button — distinct from the "Read" read-status label
-#. above (which is "Gelezen"/past tense). This one is the verb "to read".
-msgid "Read now"
-msgstr "Nu lezen"
-
 #: cps/templates/detail.html:692 cps/templates/detail.html:693
 #: cps/templates/detail.html:1069 cps/templates/listenmp3.html:158
 msgid "Mark As Unread"
@@ -8942,6 +8937,9 @@ msgstr "Synchroniseer geselecteerde boekenplanken met Kobo"
 #, fuzzy
 msgid "Show Read/Unread Section"
 msgstr "Toon gelezen/niet gelezen selectie"
+
+#~ msgid "Read now"
+#~ msgstr "Nu lezen"
 
 #~ msgid "Read in Browser"
 #~ msgstr "Lezen in webbrowser"

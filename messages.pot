@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web Automated v4.0.6\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 19:29+0000\n"
+"POT-Creation-Date: 2026-07-01 19:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6300,11 +6300,6 @@ msgstr ""
 #: cps/templates/detail.html:634 cps/templates/image.html:26
 #: cps/templates/listenmp3.html:159
 msgid "Read"
-msgstr ""
-
-#. New-UI "open the reader" button — the verb "to read", distinct from the
-#. "Read" read-status label above (a past participle in many languages).
-msgid "Read now"
 msgstr ""
 
 #: cps/templates/detail.html:692 cps/templates/detail.html:693
