@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 17:23+0000\n"
+"POT-Creation-Date: 2026-07-01 20:03+0000\n"
 "PO-Revision-Date: 2023-07-25 11:30+0100\n"
 "Last-Translator: horus68 <https://github.com/horus68>\n"
 "Language-Team: pt-PT <>\n"
@@ -2476,6 +2476,11 @@ msgstr ""
 #: cps/shelf.py:1062
 msgid "Manual (drag below)"
 msgstr ""
+
+#: cps/spa_strings.py:29
+#, fuzzy
+msgid "Read now"
+msgstr "Ler no Navegador"
 
 #: cps/tasks_status.py:37 cps/templates/layout.html:369
 #: cps/templates/tasks.html:7
@@ -9005,9 +9010,6 @@ msgstr "Sincronizar com Kobo as estantes selecionadas"
 #, fuzzy
 msgid "Show Read/Unread Section"
 msgstr "Mostrar secção de lidos/não lidos"
-
-#~ msgid "Read in Browser"
-#~ msgstr "Ler no Navegador"
 
 #~ msgid "Drag to Rearrange Order"
 #~ msgstr "Arrastar para reordenar"

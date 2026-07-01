@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 17:23+0000\n"
+"POT-Creation-Date: 2026-07-01 20:03+0000\n"
 "PO-Revision-Date: 2017-04-30 00:47+0300\n"
 "Last-Translator: ABIS Team <biblio.if.abis@gmail.com>\n"
 "Language-Team: \n"
@@ -2405,6 +2405,11 @@ msgstr ""
 #: cps/shelf.py:1062
 msgid "Manual (drag below)"
 msgstr ""
+
+#: cps/spa_strings.py:29
+#, fuzzy
+msgid "Read now"
+msgstr "Відкрити в браузері"
 
 #: cps/tasks_status.py:37 cps/templates/layout.html:369
 #: cps/templates/tasks.html:7
@@ -8903,9 +8908,6 @@ msgstr ""
 #, fuzzy
 msgid "Show Read/Unread Section"
 msgstr "Показувати вибір серії"
-
-#~ msgid "Read in Browser"
-#~ msgstr "Відкрити в браузері"
 
 #~ msgid "Drag to Rearrange Order"
 #~ msgstr "Перетягніть для змінення порядку"
