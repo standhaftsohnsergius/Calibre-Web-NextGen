@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 17:23+0000\n"
+"POT-Creation-Date: 2026-07-01 20:03+0000\n"
 "PO-Revision-Date: 2023-01-21 10:00+0700\n"
 "Last-Translator: Arief Hidayat<arihid95@gmail.com>\n"
 "Language-Team: Arief Hidayat <arihid95@gmail.com>\n"
@@ -2446,6 +2446,11 @@ msgstr ""
 #: cps/shelf.py:1062
 msgid "Manual (drag below)"
 msgstr ""
+
+#: cps/spa_strings.py:29
+#, fuzzy
+msgid "Read now"
+msgstr "Baca di Peramban"
 
 #: cps/tasks_status.py:37 cps/templates/layout.html:369
 #: cps/templates/tasks.html:7
@@ -8939,9 +8944,6 @@ msgstr "Sinkronkan Rak yang dipilih dengan Kob"
 #, fuzzy
 msgid "Show Read/Unread Section"
 msgstr "Tampilkan pilihan baca/belum dibaca"
-
-#~ msgid "Read in Browser"
-#~ msgstr "Baca di Peramban"
 
 #~ msgid "Drag to Rearrange Order"
 #~ msgstr "Seret untuk Mengatur Ulang Urutan"

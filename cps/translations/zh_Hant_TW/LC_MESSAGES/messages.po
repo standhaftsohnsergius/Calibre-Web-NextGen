@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 17:23+0000\n"
+"POT-Creation-Date: 2026-07-01 20:03+0000\n"
 "PO-Revision-Date: 2020-09-27 22:18+0800\n"
 "Last-Translator: xlivevil <xlivevil@aliyun.com>\n"
 "Language-Team: zh_Hans_CN <LL@li.org>\n"
@@ -2400,6 +2400,11 @@ msgstr ""
 #: cps/shelf.py:1062
 msgid "Manual (drag below)"
 msgstr ""
+
+#: cps/spa_strings.py:29
+#, fuzzy
+msgid "Read now"
+msgstr "在線閱讀"
 
 #: cps/tasks_status.py:37 cps/templates/layout.html:369
 #: cps/templates/tasks.html:7
@@ -8874,9 +8879,6 @@ msgstr "同步所選書架到 Kobo"
 #, fuzzy
 msgid "Show Read/Unread Section"
 msgstr "顯示已讀/未讀選擇"
-
-#~ msgid "Read in Browser"
-#~ msgstr "在線閱讀"
 
 #~ msgid "Drag to Rearrange Order"
 #~ msgstr "拖拽以重新排序"

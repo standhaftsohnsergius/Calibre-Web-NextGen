@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 17:23+0000\n"
+"POT-Creation-Date: 2026-07-01 20:03+0000\n"
 "PO-Revision-Date: 2018-08-27 17:06+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2394,6 +2394,11 @@ msgstr ""
 #: cps/shelf.py:1062
 msgid "Manual (drag below)"
 msgstr ""
+
+#: cps/spa_strings.py:29
+#, fuzzy
+msgid "Read now"
+msgstr "អានក្នុងកម្មវិធី browser"
 
 #: cps/tasks_status.py:37 cps/templates/layout.html:369
 #: cps/templates/tasks.html:7
@@ -8863,9 +8868,6 @@ msgstr ""
 #, fuzzy
 msgid "Show Read/Unread Section"
 msgstr "បង្ហាញជម្រើសស៊េរី"
-
-#~ msgid "Read in Browser"
-#~ msgstr "អានក្នុងកម្មវិធី browser"
 
 #~ msgid "Drag to Rearrange Order"
 #~ msgstr "ទាញដើម្បីប្តូរលំដាប់"

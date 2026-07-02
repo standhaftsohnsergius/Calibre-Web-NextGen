@@ -2540,6 +2540,11 @@ msgstr ""
 msgid "Manual (drag below)"
 msgstr ""
 
+#: cps/spa_strings.py:29
+#, fuzzy
+msgid "Read now"
+msgstr "Читать в браузере"
+
 #: cps/tasks_status.py:37 cps/templates/layout.html:369
 #: cps/templates/tasks.html:7
 msgid "Tasks"
@@ -9222,9 +9227,6 @@ msgstr "Синхронизировать выбранные полки с Kobo"
 #, fuzzy
 msgid "Show Read/Unread Section"
 msgstr "Показать раздел прочитанного/непрочитанного"
-
-#~ msgid "Read in Browser"
-#~ msgstr "Читать в браузере"
 
 #~ msgid "Drag to Rearrange Order"
 #~ msgstr "Перетащите для изменения порядка"

@@ -16,6 +16,37 @@ is for things you can see or feel when running the app.
 
 ## [Unreleased]
 
+### Fixed
+- **The library now keeps your scroll position when you scroll the first page
+  and go Back from a book.** The scroll-restore added in v4.1.1 worked once you'd
+  loaded more pages, but if you only scrolled the first screen of books, opened
+  one, and came back, the list jumped to the top. Reported by @KucharczykL.
+
+## [v4.1.3] - 2026-07-01
+
+Corrective release: if you're on v4.1.1 or v4.1.2, update — those versions show
+a stuck popup over the classic view.
+
+### Fixed
+- **The classic view no longer shows a feedback popup you can't close.** In
+  v4.1.1 and v4.1.2, the optional "what made you switch back?" prompt appeared
+  on every classic page — not just after switching from the new UI — and none of
+  its buttons could dismiss it (on phones it didn't even fit the screen). It now
+  stays hidden unless you've just switched back from the new interface, every
+  button closes it, and it fits and scrolls on small screens. Reported by
+  @iroQuai (#576).
+
+## [v4.1.2] - 2026-07-01
+
+This release carries exactly the same fixes as v4.1.1, re-published under a new
+version number so the in-app "update available" prompt reaches everyone. If you
+updated to v4.1.1 in the short window right after it first went out, you may have
+landed on an earlier build of it; moving to v4.1.2 guarantees you're on the
+corrected version. Nothing else changed — the full list of what's fixed is in the
+v4.1.1 notes below.
+
+## [v4.1.1] - 2026-07-01
+
 ### Added
 - **The new-UI edit page can now edit identifiers, and you choose which fetched
   values to apply.** Editing a book in the new interface now has an Identifiers
@@ -32,6 +63,30 @@ is for things you can see or feel when running the app.
   appears right after you switch back, and won't nag you again.
 
 ### Fixed
+- **The new UI's book page now shows your KOReader/Kobo reading progress.** If
+  you sync progress from KOReader or a Kobo, the book page again shows "KOReader
+  progress: X%" (it was only on the classic page before — the synced progress was
+  never lost). Reported by @alva-seal (#587).
+- **Dutch: the new UI's book buttons read correctly.** The button that opens the
+  reader said "Gelezen" ("has been read") instead of a "read now" verb, and the
+  already-read marker showed the English word "Read". The reader button now says
+  "Nu lezen" and the marker shows "Gelezen ✓". (Under the hood the reader action
+  and the read-status label are now separate strings, so this collision can't
+  recur in other languages either.) Reported in #577.
+- **Book identifiers are clickable links again in the new UI.** On a book's page,
+  identifiers like Goodreads, StoryGraph, Hardcover, Amazon and ISBN now link out
+  to the book on that site (as they did in the classic UI) instead of showing as
+  plain text. Reported by @alva-seal (#582).
+- **The new UI now keeps your place in the library when you go back from a book.**
+  Scrolling down, opening a book, then pressing Back used to jump you to the top
+  of the library (losing loaded pages) — annoying when opening several books in a
+  row. It now restores your scroll position and the books you'd already loaded.
+  Reported in #578.
+- **The mobile menu drawer in the new UI is now solid and scrolls properly.** On
+  phones, opening the navigation menu showed a see-through panel that couldn't be
+  scrolled — trying to scroll it moved the page behind instead, so lower items
+  (like Magic Shelves) were unreachable. The drawer now has a solid background and
+  scrolls on its own. Reported in #576.
 - **The new UI now shows the Calibre-Web favicon in the browser tab.** The
   redesigned interface had a blank tab icon; it now uses the same favicon as the
   classic UI (and it works behind a reverse-proxy subpath too). Reported in #574.

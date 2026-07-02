@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 17:23+0000\n"
+"POT-Creation-Date: 2026-07-01 20:03+0000\n"
 "PO-Revision-Date: 2025-09-08 00:53+0900\n"
 "Last-Translator: limeade23 <admin@limeade.me>\n"
 "Language-Team: Korean <>\n"
@@ -2381,6 +2381,11 @@ msgstr ""
 #: cps/shelf.py:1062
 msgid "Manual (drag below)"
 msgstr ""
+
+#: cps/spa_strings.py:29
+#, fuzzy
+msgid "Read now"
+msgstr "웹에서 보기"
 
 #: cps/tasks_status.py:37 cps/templates/layout.html:369
 #: cps/templates/tasks.html:7
@@ -8825,9 +8830,6 @@ msgstr "선택한 서재 Kobo 동기화"
 #: cps/templates/user_table.html:158
 msgid "Show Read/Unread Section"
 msgstr "읽음/읽지 않음 표시"
-
-#~ msgid "Read in Browser"
-#~ msgstr "웹에서 보기"
 
 #~ msgid "Drag to Rearrange Order"
 #~ msgstr "드래그하여 순서 변경"

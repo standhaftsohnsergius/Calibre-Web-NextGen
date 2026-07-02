@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web NextGen\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 17:23+0000\n"
+"POT-Creation-Date: 2026-07-01 20:03+0000\n"
 "PO-Revision-Date: 2018-02-07 02:20-0500\n"
 "Last-Translator: subdiox <subdiox@gmail.com>\n"
 "Language-Team: ja <LL@li.org>\n"
@@ -2460,6 +2460,11 @@ msgstr ""
 #, fuzzy
 msgid "Manual (drag below)"
 msgstr "手動（ドラッグで並び替え）"
+
+#: cps/spa_strings.py:29
+#, fuzzy
+msgid "Read now"
+msgstr "ブラウザで読む"
 
 #: cps/tasks_status.py:37 cps/templates/layout.html:369
 #: cps/templates/tasks.html:7
@@ -9084,9 +9089,6 @@ msgstr "選択した本棚をKoboと同期"
 #: cps/templates/user_table.html:158
 msgid "Show Read/Unread Section"
 msgstr "既読/未読セクションを表示"
-
-#~ msgid "Read in Browser"
-#~ msgstr "ブラウザで読む"
 
 #~ msgid "Drag to Rearrange Order"
 #~ msgstr "ドラッグして並び順を変更"

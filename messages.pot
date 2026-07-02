@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Calibre-Web Automated v4.0.6\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-01 18:56+0000\n"
+"POT-Creation-Date: 2026-07-01 22:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2326,6 +2326,10 @@ msgstr ""
 
 #: cps/shelf.py:1062
 msgid "Manual (drag below)"
+msgstr ""
+
+#: cps/spa_strings.py:29
+msgid "Read now"
 msgstr ""
 
 #: cps/tasks_status.py:37 cps/templates/layout.html:369

@@ -10,6 +10,7 @@ import { DiscoverSection } from '../components/DiscoverSection';
 import { useBooks, useEntityList, ENTITY_PLURAL } from '../lib/queries';
 import type { EntityKind, ReadFilter, DiscoveryView } from '../lib/queries';
 import type { Book } from '../lib/api';
+import { saveCatalog, loadCatalog } from '../lib/scrollCache';
 import { usePersistentBool } from '../lib/usePersistentBool';
 import { useT } from '../lib/i18n';
 import styles from './Catalog.module.css';
@@ -57,10 +58,24 @@ interface CatalogProps {
   view?: DiscoveryView;
 }
 
+// Merge a freshly-fetched page into the accumulator: UPSERT existing books by id
+// (a re-fetch — e.g. after restoring a scroll snapshot then react-query
+// revalidates — brings updated fields, which must replace the stale copy, #578)
+// and append genuinely-new ones. Add-only append would leave edited books showing
+// their old title/cover after edit → Back.
 function dedupAppend(prev: Book[], next: Book[]): Book[] {
+  if (!next.length) return prev;
+  const byId = new Map(next.map((b) => [b.id, b]));
+  let changed = false;
+  const merged = prev.map((b) => {
+    const upd = byId.get(b.id);
+    if (upd && upd !== b) { changed = true; return upd; }
+    return b;
+  });
   const seen = new Set(prev.map((b) => b.id));
   const fresh = next.filter((b) => !seen.has(b.id));
-  return fresh.length ? [...prev, ...fresh] : prev;
+  if (!fresh.length && !changed) return prev;
+  return [...merged, ...fresh];
 }
 
 export function Catalog({ entityKind, entityId, view }: CatalogProps) {
@@ -71,12 +86,29 @@ export function Catalog({ entityKind, entityId, view }: CatalogProps) {
   // hidden for both entity-scoped and discovery views.
   const hideLibraryControls = filtered || isView;
 
-  const [page, setPage] = useState(1);
-  const [allBooks, setAllBooks] = useState<Book[]>([]);
-  const [searchInput, setSearchInput] = useState('');
-  const [search, setSearch] = useState('');
-  const [sort, setSort] = useState('new');
-  const [readFilter, setReadFilter] = useState<ReadFilter>('all');
+  // Scroll/state restoration (#578): identity of THIS catalog instance (library
+  // vs a specific entity vs a discovery view) — stable across a book → Back trip.
+  const restoreKey = `catalog:${entityKind ?? ''}:${entityId ?? ''}:${view ?? ''}`;
+  // Only restore a snapshot when it's consistent with the current URL query. A
+  // fresh top-bar search navigates to /?q=… on the SAME library route; a stale
+  // snapshot must not be rehydrated there or it would ignore the new search
+  // (Greptile #593). Entity/discovery views carry no ?q, so any snapshot applies.
+  const urlQAtMount = new URLSearchParams(
+    typeof window !== 'undefined' ? window.location.search : '').get('q') || '';
+  const rawSnap = loadCatalog(restoreKey);
+  const snapRef = useRef(
+    (filtered || isView || (rawSnap?.search ?? '') === urlQAtMount) ? rawSnap : undefined);
+  const snap = snapRef.current;
+  // True only for this first restored mount — used to stop the reset/urlQ effects
+  // from clobbering the rehydrated page/filters before the user does anything.
+  const restoringRef = useRef(!!snap);
+
+  const [page, setPage] = useState(() => snap?.page ?? 1);
+  const [allBooks, setAllBooks] = useState<Book[]>(() => snap?.books ?? []);
+  const [searchInput, setSearchInput] = useState(() => snap?.searchInput ?? '');
+  const [search, setSearch] = useState(() => snap?.search ?? '');
+  const [sort, setSort] = useState(() => snap?.sort ?? 'new');
+  const [readFilter, setReadFilter] = useState<ReadFilter>(() => (snap?.readFilter as ReadFilter) ?? 'all');
 
   // Multi-select / bulk mode
   const [selecting, setSelecting] = useState(false);
@@ -87,7 +119,7 @@ export function Catalog({ entityKind, entityId, view }: CatalogProps) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
 
-  const accKeyRef = useRef<string>('');
+  const accKeyRef = useRef<string>(snap?.resetKey ?? '');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Resolve the entity's display name (for the heading) from its browse list —
@@ -103,6 +135,9 @@ export function Catalog({ entityKind, entityId, view }: CatalogProps) {
   const urlQ = new URLSearchParams(rawSearch).get('q') || '';
   useEffect(() => {
     if (filtered || isView) return;
+    // On the first restored mount, keep the rehydrated search rather than letting
+    // the (empty) URL query clobber it (#578).
+    if (restoringRef.current) return;
     setSearchInput(urlQ);
     setSearch(urlQ);
   }, [urlQ, filtered, isView]);
@@ -134,10 +169,67 @@ export function Catalog({ entityKind, entityId, view }: CatalogProps) {
 
   const resetKey = [search, sort, readFilter, entityKind ?? '', entityId ?? '', view ?? ''].join('|');
 
-  // Any filter change resets paging to the first page.
+  // Any filter change resets paging to the first page — except on the first
+  // restored mount, where the rehydrated page must survive (#578).
   useEffect(() => {
+    if (restoringRef.current) return;
     setPage(1);
   }, [resetKey]);
+
+  // Clear the restoring flag after the initial mount so later filter/URL changes
+  // behave normally. Runs after the two guarded effects above (effect order).
+  useEffect(() => {
+    restoringRef.current = false;
+  }, []);
+
+  // Persist this catalog's state on unmount (e.g. navigating into a book) so a
+  // later Back rehydrates the loaded pages, filters and scroll position (#578).
+  const persistRef = useRef({ page, books: allBooks, resetKey: accKeyRef.current, search, searchInput, sort, readFilter });
+  persistRef.current = { page, books: allBooks, resetKey: accKeyRef.current, search, searchInput, sort, readFilter };
+
+  // Track the live scroll offset in a ref. Reading window.scrollY in the unmount
+  // cleanup is too late: by then the catalog has been swapped for the (shorter)
+  // book page and the browser has already clamped window.scrollY down to that
+  // page's max scroll — so a first-page position (nothing tall enough to survive
+  // the clamp) was saved as ~0 and Back landed back at the top (#578 first-page
+  // regression, reported by @KucharczykL). We record every scroll here and save
+  // the tracked value; the click that triggers navigation is a discrete event,
+  // so React flushes this unmount cleanup before the clamp's async scroll event,
+  // and the real offset is preserved.
+  const lastScrollYRef = useRef(snap?.scrollY ?? 0);
+  useEffect(() => {
+    const onScroll = () => { lastScrollYRef.current = window.scrollY; };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      const s = persistRef.current;
+      saveCatalog(restoreKey, { ...s, scrollY: lastScrollYRef.current });
+    };
+  }, [restoreKey]);
+
+  // Restore the saved scroll position on the first mount, once the rehydrated
+  // grid has painted (its height comes from the restored books, so the offset is
+  // reachable). Retry briefly to cover late layout (fonts/cover boxes).
+  useEffect(() => {
+    const y = snap?.scrollY ?? 0;
+    if (!y) return;
+    let tries = 0;
+    let raf = 0;
+    let cancelled = false;
+    const tick = () => {
+      if (cancelled) return;
+      window.scrollTo(0, y);
+      if (++tries < 6 && Math.abs(window.scrollY - y) > 2) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    // Cancel on unmount: without this, a quick book-open right after Back keeps
+    // the retry alive and scrolls the NEXT page to this offset / fights the user (#578).
+    return () => { cancelled = true; cancelAnimationFrame(raf); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { data, isLoading, isFetching, isPlaceholderData, error } = useBooks({
     page,

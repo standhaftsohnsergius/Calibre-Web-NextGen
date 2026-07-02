@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { Link, useParams } from 'wouter';
 import { Download, Pencil, Star, Archive, EyeOff, Eye, Send, Highlighter, Image as ImageIcon } from 'lucide-react';
 import {
@@ -184,13 +184,13 @@ export function BookDetail() {
             {hasEpub ? (
               // EPUB opens in the in-browser SPA reader (resumes saved progress).
               <Link href={`/read/${book.id}`} className={styles.actionPrimary}>
-                {t('Read')}
+                {t('Read now')}
               </Link>
             ) : primaryReadable ? (
               // PDF/audio/text open in the native multi-format reader; comics/
               // DjVu fall through there to the server reader for image extraction.
               <Link href={`/view/${book.id}/${primaryReadable.format.toLowerCase()}`} className={styles.actionPrimary}>
-                {t('Read')}
+                {t('Read now')}
               </Link>
             ) : null}
 
@@ -200,7 +200,7 @@ export function BookDetail() {
               disabled={toggleRead.isPending}
               aria-label={book.read ? t('Mark as unread') : t('Mark as read')}
             >
-              {book.read ? t('Read ✓') : t('Mark as read')}
+              {book.read ? `${t('Read')} ✓` : t('Mark as read')}
             </button>
 
             <AddToShelf bookId={book.id} />
@@ -314,6 +314,12 @@ export function BookDetail() {
 
           {/* Metadata definition list */}
           <dl className={styles.meta}>
+            {book.kosync_progress != null && (
+              <>
+                <dt className={styles.metaLabel}>{t('KOReader Progress')}</dt>
+                <dd className={styles.metaValue}>{book.kosync_progress.toFixed(1)}%</dd>
+              </>
+            )}
             {book.pubdate && (
               <>
                 <dt className={styles.metaLabel}>{t('Published')}</dt>
@@ -346,11 +352,15 @@ export function BookDetail() {
                 </dd>
               </>
             )}
-            {book.identifiers.map((id) => (
-              <>
-                <dt key={`dt-${id.type}`} className={styles.metaLabel}>{id.type.toUpperCase()}</dt>
-                <dd key={`dd-${id.type}`} className={styles.metaValue}>{id.val}</dd>
-              </>
+            {book.identifiers.map((id, i) => (
+              <Fragment key={`id-${i}`}>
+                <dt className={styles.metaLabel}>{id.label || id.type.toUpperCase()}</dt>
+                <dd className={styles.metaValue}>
+                  {id.url
+                    ? <a href={id.url} target="_blank" rel="noopener noreferrer" className={styles.metaLink}>{id.val}</a>
+                    : id.val}
+                </dd>
+              </Fragment>
             ))}
           </dl>
 

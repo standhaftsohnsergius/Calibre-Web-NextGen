@@ -90,12 +90,15 @@ export interface BookDetail {
   tags: EntityRef[];
   languages: EntityRef[];
   publishers: EntityRef[];
-  identifiers: { type: string; val: string }[];
+  identifiers: { type: string; val: string; url: string | null; label: string }[];
   formats: BookFormat[];
   read: boolean;
   archived: boolean;
   favorited: boolean;
   hidden: boolean;
+  /** KOReader/Kobo synced reading progress as a percentage (0–100), or null when
+   *  not synced. */
+  kosync_progress: number | null;
 }
 
 export interface BooksPage {
